@@ -6,6 +6,7 @@ GPIO modul pro řízení žaluzií a topení
 - 12 vstupů přímo na GPIO
 - indikační led výstupů, vstupů, komunikace a napájení :)
 - rs485
+- adresace (min 4b lepe 8b)
 
 # Součástky:
 - Rozvaděč podomítkový: (30x19x7.5)   SRp-12 P
