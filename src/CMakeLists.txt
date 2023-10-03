@@ -12,4 +12,4 @@ add_subdirectory(jolib)
 
 #find_package(SimpleITK)
 add_executable ( ${PROJECT_NAME} main.cpp )
-target_link_libraries ( ${PROJECT_NAME} jolib )
+target_link_libraries ( ${PROJECT_NAME} jolib linuxSimulator)
