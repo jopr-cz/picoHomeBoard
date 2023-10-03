@@ -6,9 +6,10 @@ project(${PROJECT_NAME})
 
 
 
-include_directories(nanoMODBUS)
-add_subdirectory(nanoMODBUS)
+#include_directories(nanoMODBUS)
+#add_subdirectory(nanoMODBUS)
+add_subdirectory(jolib)
 
 #find_package(SimpleITK)
-add_executable ( ${PROJECT_NAME} main.cpp nanoMODBUS/nanomodbus.h )
-#target_link_libraries ( sitk_example ${SimpleITK_LIBRARIES} )
+add_executable ( ${PROJECT_NAME} main.cpp )
+target_link_libraries ( ${PROJECT_NAME} jolib )

@@ -24,6 +24,21 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "list": "c",
+        "cmath": "cpp",
+        "cstdarg": "cpp",
+        "cstddef": "cpp",
+        "cstdio": "cpp",
+        "array": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "ranges": "cpp"
     }
 }
