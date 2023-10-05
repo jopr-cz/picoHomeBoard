@@ -39,6 +39,13 @@
         "random": "cpp",
         "tuple": "cpp",
         "utility": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "string_view": "cpp",
+        "span": "cpp",
+        "bitset": "cpp",
+        "deque": "cpp",
+        "unordered_set": "cpp"
     }
 }
