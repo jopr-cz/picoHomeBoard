@@ -8,6 +8,66 @@ void ZALUZ::btnStateChanged(const BUTTON *btn, void *userData)
 
 void ZALUZ::btnStateChanged(const BUTTON *btn){
     printf("Btn %d change state to: %d\n",btn->btnIndex,btn->isPressed);
+
+    bool btnTypeDown=false;
+    bool btnTypeUp=false;
+    bool btnMatch=false;
+    
+    for(auto it:btnsUp){
+        if(it==btn->btnIndex){
+            btnTypeDown=false;
+            btnMatch=true;
+        }
+    }
+
+    for(auto it:btnsDown){
+        if(it==btn->btnIndex){
+            btnTypeUp=true;
+            btnMatch=true;
+        }
+    }
+
+    if(btnMatch==false){
+        printf("ERROR GPIO callback but gpio is not registered\n");
+        return;
+    }
+
+    if(btnTypeUp && btnTypeDown){
+        printf("ERROR btn %d is up and down together!\n",btn->btnIndex);
+        return;
+    }
+
+
+    if(btnTypeUp){
+        if(btn->isPressed){
+            resetAllStates();
+            request.request_valid=true;
+            request.position=0;
+        }else if(btn->doublePressed){
+            resetAllStates();
+            request.request_valid=true;
+            request.position=0;
+        }else{
+            resetAllStates();
+            request.request_valid=false;
+            request.position=0;
+        }
+        
+    }else if(btnTypeDown){
+        if(btn->isPressed){
+            resetAllStates();
+            request.request_valid=true;
+            request.position=maxDownTime;
+        }else if(btn->doublePressed){
+            resetAllStates();
+            request.request_valid=true;
+            request.position=maxDownTime;
+        }else{
+            resetAllStates();
+            request.request_valid=false;
+            request.position=0;
+        }
+    }
 }
 
 
@@ -34,62 +94,7 @@ void ZALUZ::resetAllStates(){
 
 void ZALUZ::process()
 {
-    bool btnUp=false;
-    bool btnDown=false;
-    bool doubleUp=false;
-    bool doubleDown=false;
-    
-    for(auto it:btnsUp){
-        if(gpio->getBtn(it)->isPressed)
-            btnUp=true;
-        if(gpio->getBtn(it)->doublePressed)
-            doubleUp=true;
-    }
-    for(auto it:btnsDown){
-        if (gpio->getBtn(it)->isPressed)
-            btnDown=true;
-        if(gpio->getBtn(it)->doublePressed)
-            doubleDown=true;
-    }
-
-    if(btnUp && btnDown){
-        printf("BTN UP+DOWN together!!!\n");
-        doubleDownRequest=false;
-        doubleUpRequest=false;
-        stop();
-        return;
-    }
-
-    if(doubleUp && doubleDown){
-        printf("BTN DOUBLE UP+DOWN together!!!\n");
-        doubleDownRequest=false;
-        doubleUpRequest=false;
-        stop();
-        return;
-    }
-    ////////////////////////////////////////////////////////////////
-
-    if(btnUp){
-        resetAllStates();
-        runUp();
-    }else if(btnDown){
-        resetAllStates();
-        runDown();
-    }else if (doubleDownRequest){
-        if(state!=CLOSE)
-            runDown();
-        else{
-            resetAllStates();
-            stop();
-        }
-    }else if(doubleUpRequest){
-        if(state!=OPEN)
-            runUp();
-        else{
-            resetAllStates();
-            stop();
-        }
-    }else if(request.request_valid){
+    if(request.request_valid){
         if(position+hystereze<request.position){
             runUp();
         }else if(position>request.position+hystereze){
@@ -98,8 +103,6 @@ void ZALUZ::process()
             request.request_valid=false;
         }
 
-    }else{
-        stop();
     }
 }
 
