@@ -1,6 +1,3 @@
-[submodule "src/nanoMODBUS"]
-	path = src/nanoMODBUS
-	url = https://github.com/debevv/nanoMODBUS.git
 [submodule "src/jolib"]
 	path = src/jolib
 	url = git@github.com:poucz/jolib.git
