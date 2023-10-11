@@ -7,7 +7,7 @@
 #include "gpio.h"
 
 
-class ZALUZ{
+class ZALUZ:public BASE_MODUL{
 public:
  
     enum ZALUZ_STATE{
@@ -18,36 +18,46 @@ public:
 
 
     ZALUZ(GPIO_BASE * gpioInterface,int index):
+        BASE_MODUL("zaluz"),
         position(0),
         maxDownTime(5000),
         hystereze(20),
         zaluzie_index(index),
+        lastProcessedTime(0),
         state(OPEN),
         gpio(gpioInterface),
         doubleUpRequest(false),
-        doubleDownRequest(false){
-            gpioInterface->setBtnCallback(btnStateChanged,0x01<<zaluzie_index,this);
+        doubleDownRequest(false),
+        isPrinted(false){
+            
     }
    
     void setState(ZALUZ_STATE state); // jedeme do daneho stavu - např. modbusem
 
     void runUp();//jedeme nahoru
     void runDown();//jedeme dolu
-    bool isRunningUp()const;
-    bool isRunningDown()const;
     void stop();//zastavujeme vsechny pohyby
 
-    void process();
+    void process()override;
+    void procesMS()override;
     ZALUZ_STATE getState()const{return state;}
+    uint8_t getPositionPercent()const;//vrati pozici v pracentech
 
-    void setBtnUp(int btnIndex){btnsUp.push_back(btnIndex);}
-    void setBtnDown(int btnIndex){btnsDown.push_back(btnIndex);}
+    void setBtnUp(int btnIndex){
+        btnsUp.push_back(btnIndex);
+        gpio->setBtnCallback(btnStateChanged,0x01<<btnIndex,this);
+    }
+    void setBtnDown(int btnIndex){
+        btnsDown.push_back(btnIndex);
+        gpio->setBtnCallback(btnStateChanged,0x01<<btnIndex,this);
+    }
 
 private:
     uint32_t position;///<aktualni stav zaluzie (cas [ms] ktery jela dolu)
     uint32_t maxDownTime;///<počet [ms] pro plné zavření - ze stavu OPEN -> CLOSE
     const u_int8_t hystereze;///< počet [ms] pri srovnavani pozice (position)
     int zaluzie_index;
+    uint64_t lastProcessedTime;///< timestam posledniho volani process()funkce
 
     ZALUZ_STATE state;
 
@@ -55,6 +65,8 @@ private:
 
     bool doubleUpRequest;
     bool doubleDownRequest;
+
+    bool isPrinted;//zabraneni neustalemu vypisu do printf
 
     std::vector<int> btnsDown;///<index tlačítka dolů
     std::vector<int> btnsUp;    ///<index tlačítka nahoru
@@ -77,13 +89,16 @@ class ZALUZIE: public BASE_MODUL{
 public:
     ZALUZIE(GPIO_BASE * gpioInterface);
 
+    ZALUZ::ZALUZ_STATE getZaluzState(int zaluzIndex) const;
+    int getZaluzPosition(int zaluzIndex) const;
 protected:
     GPIO_BASE * gpio;
-    std::vector<ZALUZ> zaluzie;
+    std::vector<ZALUZ*> zaluzie;
     const int ZALUZ_CNT=6;
 
 
     virtual void process()override;
+    virtual void procesMS()override;
     static void btnStateChanged(const BUTTON* btn,void * userData);
     
     void btnStateChanged(const BUTTON* btn);
