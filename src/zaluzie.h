@@ -20,7 +20,7 @@ public:
     ZALUZ(GPIO_BASE * gpioInterface,int index):
         BASE_MODUL("zaluz"),
         position(0),
-        maxDownTime(5000),
+        maxDownTime(5000000),
         hystereze(20),
         zaluzie_index(index),
         lastProcessedTime(0),
@@ -53,7 +53,7 @@ public:
     }
 
 private:
-    uint32_t position;///<aktualni stav zaluzie (cas [ms] ktery jela dolu)
+    uint32_t position;///<aktualni stav zaluzie (cas [us] ktery jela dolu)
     uint32_t maxDownTime;///<počet [ms] pro plné zavření - ze stavu OPEN -> CLOSE
     const u_int8_t hystereze;///< počet [ms] pri srovnavani pozice (position)
     int zaluzie_index;

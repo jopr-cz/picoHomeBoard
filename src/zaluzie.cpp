@@ -85,12 +85,12 @@ void ZALUZ::runUp(){
         return;
     }
     
-    uint32_t diff=(timestamp-lastProcessedTime)/1000;
+    uint32_t diff=(timestamp-lastProcessedTime);
     position -= diff;
     if(position<0)
         position=0;
-        
-    if(timestampMS%100==0)
+
+    if(timestamp%100000==0)
         printf("ZALUZ %d UP %zu\n", zaluzie_index,position);
 }
 
@@ -104,12 +104,12 @@ void ZALUZ::runDown(){
         return;
     }
     
-    uint32_t diff=(timestamp-lastProcessedTime)/1000;
+    uint32_t diff=(timestamp-lastProcessedTime);
     position += diff;
     if(position>maxDownTime)
             position=maxDownTime;
 
-    if(timestampMS%100==0)
+    if(timestamp%100000==0)
         printf("ZALUZ %d DOWN %zu\n", zaluzie_index,position);
 }
 
@@ -128,13 +128,7 @@ void ZALUZ::resetAllStates(){
     
 }
 
-void ZALUZ::process()
-{
-
-}
-
-
-void ZALUZ::procesMS(){
+void ZALUZ::process(){
 
     if(request.request_valid){
         isPrinted=false;
@@ -152,6 +146,12 @@ void ZALUZ::procesMS(){
         stop();
     }
     lastProcessedTime=timestamp;
+
+}
+
+
+void ZALUZ::procesMS(){
+
 }
 
 uint8_t ZALUZ::getPositionPercent() const{
