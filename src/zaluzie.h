@@ -93,6 +93,8 @@ public:
     int getZaluzPosition(int zaluzIndex) const;
 
     void setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex);
+
+    GPIO_BASE * getGpio()const {return gpio;}
 protected:
     GPIO_BASE * gpio;
     std::vector<ZALUZ*> zaluzie;

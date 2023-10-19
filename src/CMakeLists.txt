@@ -17,7 +17,7 @@ set(TARGET_LIBS jolib)
 
 
 add_subdirectory(jolib)
-add_executable ( ${PROJECT_NAME} main.cpp zaluzie.cpp topeni.cpp)
+add_executable ( ${PROJECT_NAME} main.cpp zaluzie.cpp topeni.cpp zaluzie_main.cpp)
 
 
 
