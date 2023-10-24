@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
 
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL "cortex-m0plus")
+if(CMAKE_CXX_COMPILER MATCHES "arm")
+    message("CONFIG FOR RASPERRY PICO")
     include(pico_sdk_import.cmake)
+    set(SOURCE_FILES  main.cpp)
+else()
+    message("CONFIG FOR LINUX")
+    set(SOURCE_FILES ${SOURCE_FILES} main_linux.cpp)
 endif()
 
 set(PROJECT_NAME pocoHomeBoard)
@@ -17,12 +22,13 @@ set(TARGET_LIBS jolib)
 
 
 add_subdirectory(jolib)
-add_executable ( ${PROJECT_NAME} main.cpp zaluzie.cpp topeni.cpp homeBoard.cpp)
 
 
+set(SOURCE_FILES ${SOURCE_FILES} zaluzie.cpp topeni.cpp homeBoard.cpp )
+
+add_executable ( ${PROJECT_NAME} ${SOURCE_FILES})
 
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "cortex-m0plus")
-    message("CONFIG FOR RASPERRY PICO")
     pico_sdk_init()
 
     pico_enable_stdio_usb(${PROJECT_NAME} 1)
@@ -33,10 +39,9 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "cortex-m0plus")
 else()
     #target_link_libraries ( ${PROJECT_NAME} jolib linuxSimulator)
     set(TARGET_LIBS ${TARGET_LIBS} linuxSimulator)
-
     add_subdirectory(tests)
 endif()
 
-message("Linked libsXX: ${TARGET_LIBS}")
+
 
 target_link_libraries ( ${PROJECT_NAME} ${TARGET_LIBS})
