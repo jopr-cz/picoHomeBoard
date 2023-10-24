@@ -17,7 +17,7 @@ set(TARGET_LIBS jolib)
 
 
 add_subdirectory(jolib)
-add_executable ( ${PROJECT_NAME} main.cpp zaluzie.cpp topeni.cpp zaluzie_main.cpp)
+add_executable ( ${PROJECT_NAME} main.cpp zaluzie.cpp topeni.cpp homeBoard.cpp)
 
 
 
@@ -33,6 +33,8 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "cortex-m0plus")
 else()
     #target_link_libraries ( ${PROJECT_NAME} jolib linuxSimulator)
     set(TARGET_LIBS ${TARGET_LIBS} linuxSimulator)
+
+    add_subdirectory(tests)
 endif()
 
 message("Linked libsXX: ${TARGET_LIBS}")

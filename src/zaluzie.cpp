@@ -70,8 +70,15 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
     }
 }
 
+void ZALUZ::setPosition(uint16_t newPositionPercent){
+    resetAllStates();
+    request.request_valid=true;
+    request.position=(maxDownTime*newPositionPercent)/100;
+    printf("Zaluzie %d seting state to position:%d\n",zaluzie_index,request.position);
+}
 
-void ZALUZ::setState(ZALUZ_STATE state){
+void ZALUZ::setState(ZALUZ_STATE state)
+{
     resetAllStates();
     request.request_valid=true;
     switch (state) {
@@ -89,7 +96,6 @@ void ZALUZ::setState(ZALUZ_STATE state){
     }
     printf("Zaluzie %d seting state to %d (position:%d)\n",zaluzie_index,state,request.position);
 }
-
 
 void ZALUZ::runUp(){
     if(position<=0){
@@ -231,6 +237,15 @@ void ZALUZIE::setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex){
         return;
     }
     zaluzie[zaluzIndex]->setState(newState);
+}
+
+
+void ZALUZIE::setPosition(uint16_t newPositionPercentage, int zaluzIndex){
+    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
+        printf("Zaluz index out of range\n");
+        return;
+    }
+    zaluzie[zaluzIndex]->setPosition(newPositionPercentage);
 }
 
 void ZALUZIE::process(){

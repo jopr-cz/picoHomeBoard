@@ -32,6 +32,7 @@ public:
             
     }
    
+    void setPosition(uint16_t newPositionPercent); // nova zadana pozici v [%]
     void setState(ZALUZ_STATE state); // jedeme do daneho stavu - např. modbusem
 
     void runUp();//jedeme nahoru
@@ -93,6 +94,7 @@ public:
     int getZaluzPosition(int zaluzIndex) const;
 
     void setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex);
+    void setPosition(uint16_t newPositionPercentage,int zaluzIndex); // nova zadana pozici v [%]
 
     GPIO_BASE * getGpio()const {return gpio;}
 protected:
