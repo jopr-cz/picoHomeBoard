@@ -13,6 +13,7 @@
 
 #include "modbus.h"
 #include "serial_port.h"
+#include "serial_pico.h"
 #include "zaluzie.h"
 #include "gpio_pico.h"
 #include "homeBoard.h"
@@ -23,7 +24,7 @@ int main()
     int userInput;
     MAIN_HELPER modul_helper;
     
-    SerialPort ser;
+    SerialPico ser(true);
     GPIO_PICO gpio;
     ZALUZIE zaluzie(&gpio);
     HomeBoard homeBoard(&zaluzie,0x05,&ser);
@@ -56,6 +57,9 @@ int main()
             break;
             case 'f':
                 gpio.setOutput(false,3);
+            break;
+            case 's':
+                ser.sendStr(std::string("AHOJ"));
             break;
 			case 'r':
 				puts("REBOOT\n");

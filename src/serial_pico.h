@@ -6,14 +6,17 @@
 
 class SerialPico: public SerialPort {
 public:
-    SerialPico();
+    SerialPico(bool _rs485);
 
     virtual void send(const DATA_BUFFER &message) override;
 
+    friend void on_uart_rx();
 protected:
     virtual void process()override;
     virtual void procesS()override;
 
+private:
+    const bool rs485;
 };
 
 
