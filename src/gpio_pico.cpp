@@ -53,20 +53,20 @@ void GPIO_PICO::setStatusLed(bool on){
 
 uint16_t GPIO_PICO::getBtnInputState(){
     uint16_t g=0;
-    g |= (gpio_get(3));
-    g |= (gpio_get(4)  << 1);
-    g |= (gpio_get(5)  << 2);
-    g |= (gpio_get(6)  << 3);
-    g |= (gpio_get(7)  << 4);
-    g |= (gpio_get(8)  << 5);
-    g |= (gpio_get(9)  << 6);
-    g |= (gpio_get(10) << 7);
-    g |= (gpio_get(11) << 8);
-    g |= (gpio_get(12) << 9);
-    g |= (gpio_get(13) << 10);
-    g |= (gpio_get(16) << 11);
-    g |= (gpio_get(17) << 12);
-    g |= (gpio_get(18) << 13);
+    g |= (gpio_get(3)  << 6);
+    g |= (gpio_get(4)  << 7);
+    g |= (gpio_get(5)  << 8);
+    g |= (gpio_get(6)  << 9);
+    g |= (gpio_get(7)  << 10);
+    g |= (gpio_get(8)  << 11);
+    g |= (gpio_get(9)  << 5);
+    g |= (gpio_get(10) << 4);
+    g |= (gpio_get(11) << 3);
+    g |= (gpio_get(12) << 2);
+    g |= (gpio_get(13) << 1);
+    g |= (gpio_get(16) << 12);
+    g |= (gpio_get(17) << 13);
+    g |= (gpio_get(18) << 0);
     return g;
 }
 

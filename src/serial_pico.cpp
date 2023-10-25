@@ -91,9 +91,6 @@ void SerialPico::send(const DATA_BUFFER &message){
     //uart_puts(UART_ID, message.c_str());
     if(message.size()==0) return;
 
-    printf("RS send message \n");
-    printBuffer(message);
-
     if(rs485){
         gpio_put(UART_485_TX_PIN, true);
         sleep_us(10);

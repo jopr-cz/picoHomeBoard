@@ -21,7 +21,7 @@ public:
         BASE_MODUL("zaluz"),
         position(0),
         maxDownTime(5000000),
-        hystereze(20),
+        hystereze(1000),
         zaluzie_index(index),
         lastProcessedTime(0),
         state(OPEN),
@@ -55,8 +55,8 @@ public:
 
 private:
     uint32_t position;///<aktualni stav zaluzie (cas [us] ktery jela dolu)
-    uint32_t maxDownTime;///<počet [ms] pro plné zavření - ze stavu OPEN -> CLOSE
-    const u_int8_t hystereze;///< počet [ms] pri srovnavani pozice (position)
+    uint32_t maxDownTime;///<počet [us] pro plné zavření - ze stavu OPEN -> CLOSE
+    const uint16_t hystereze;///< počet [us] pri srovnavani pozice (position)
     int zaluzie_index;
     uint64_t lastProcessedTime;///< timestam posledniho volani process()funkce
 

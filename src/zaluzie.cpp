@@ -74,7 +74,7 @@ void ZALUZ::setPosition(uint16_t newPositionPercent){
     resetAllStates();
     request.request_valid=true;
     request.position=(maxDownTime*newPositionPercent)/100;
-    printf("Zaluzie %d seting state to position:%d\n",zaluzie_index,request.position);
+    printf("Zaluzie %d seting position:%d\n",zaluzie_index,request.position);
 }
 
 void ZALUZ::setState(ZALUZ_STATE state)
@@ -113,7 +113,10 @@ void ZALUZ::runUp(){
         position=0;
 
     if(timestamp%100000==0)
-        printf("ZALUZ %d UP %zu\n", zaluzie_index,position);
+        printf("ZALUZ %d UP %zu -> \n", zaluzie_index,position,request.position);
+
+    gpio->setOutput(false,zaluzie_index*2);
+    gpio->setOutput(true,(zaluzie_index*2)+1);
 }
 
 void ZALUZ::runDown(){
@@ -132,7 +135,10 @@ void ZALUZ::runDown(){
             position=maxDownTime;
 
     if(timestamp%100000==0)
-        printf("ZALUZ %d DOWN %zu\n", zaluzie_index,position);
+        printf("ZALUZ %d DOWN %zu -> %zu\n", zaluzie_index,position,request.position);
+    
+    gpio->setOutput(true,zaluzie_index*2);
+    gpio->setOutput(false,(zaluzie_index*2)+1);
 }
 
 
@@ -140,6 +146,9 @@ void ZALUZ::stop(){
     if(isPrinted==false)
         printf("ZALUZ %d STOP %zu\n", zaluzie_index,position);
     isPrinted=true;
+
+    gpio->setOutput(false,zaluzie_index*2);
+    gpio->setOutput(false,(zaluzie_index*2)+1);
 }
 
 
@@ -154,11 +163,11 @@ void ZALUZ::process(){
 
     if(request.request_valid){
         isPrinted=false;
-        //if(position+hystereze<request.position){
-        if(position<request.position){
+        if(position+hystereze<request.position){
+        //if(position<request.position){
             runDown();
-        //}else if(position>request.position+hystereze){
-        }else if(position>request.position){
+        }else if(position>request.position+hystereze){
+        //}else if(position>request.position){
             runUp();
         }else{
             request.request_valid=false;
@@ -209,8 +218,8 @@ ZALUZIE::ZALUZIE(GPIO_BASE * gpioInterface):BASE_MODUL("zaluzie"),gpio(gpioInter
         zaluz->setBtnDown(i*2);
         zaluz->setBtnUp((i*2)+1);
 
-        zaluz->setBtnDown(13);
-        zaluz->setBtnUp(14);
+        zaluz->setBtnDown(12);
+        zaluz->setBtnUp(13);
         zaluzie.push_back(zaluz);
     }
 }
