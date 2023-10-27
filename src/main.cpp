@@ -26,13 +26,17 @@ int main()
     
     SerialPico ser(true);
     GPIO_PICO gpio;
-    ZALUZIE zaluzie(&gpio);
-    HomeBoard homeBoard(&zaluzie,0x05,&ser);
+    ZALUZIE *zaluzie=nullptr;
+
+    if(!(gpio.getAddress() & 0x20))//zaluzie modul enabled
+        zaluzie=new ZALUZIE(&gpio);
+
+    HomeBoard homeBoard(zaluzie,&gpio,&ser);
 
 
     modul_helper.addModul(&ser);
     modul_helper.addModul(&gpio);
-    modul_helper.addModul(&zaluzie);
+    modul_helper.addModul(zaluzie);
     modul_helper.addModul(&homeBoard);
     
     static absolute_time_t timestamp;
@@ -69,4 +73,5 @@ int main()
 			break;
 		}
 	}
+    return 0;
 }

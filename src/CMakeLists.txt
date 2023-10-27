@@ -22,7 +22,9 @@ set(TARGET_LIBS jolib)
 
 
 
-set(SOURCE_FILES ${SOURCE_FILES} zaluzie.cpp topeni.cpp homeBoard.cpp )
+
+
+set(SOURCE_FILES ${SOURCE_FILES} zaluzie.cpp topeni.cpp homeBoard.cpp ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp )
 
 add_executable ( ${PROJECT_NAME} ${SOURCE_FILES})
 
@@ -50,3 +52,16 @@ endif()
 add_subdirectory(jolib)
 
 target_link_libraries ( ${PROJECT_NAME} ${TARGET_LIBS})
+
+
+
+
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp
+           ${CMAKE_CURRENT_BINARY_DIR}/_srcVersion.cpp #dummy target - aby se CMD provedl vzdy
+    COMMAND ${CMAKE_COMMAND} -P
+            ${CMAKE_CURRENT_SOURCE_DIR}/version.cmake)
+
+add_custom_target(run ALL #aby se CUSTOM CMD zavolal poro vsechny targety
+    DEPENDS srcVersion.cpp)

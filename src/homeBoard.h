@@ -18,6 +18,13 @@
 *   | 0x05   | pozice v [%] žaluzie 6 |
 *
 *
+*   | 0x1000 | SW GIT version  hight 16b|
+*   | 0x1001 | SW GIT version  down  16b|
+*
+*
+*
+*
+*
 *   DISCRETE INPUTS (tlačítka) FCE2
 *   ^address ^ description ^
 *    | 0x00      | vstup 0 |
@@ -52,7 +59,10 @@
 *    | 0x0B   |  rele 11|
 *
 *
-*
+*  DEVICE ID
+*   1-4 - device ID (modbus)
+*   5- 0=zaluzie,1=topeni
+*   
 *
 */
 
@@ -60,11 +70,12 @@
 
 class HomeBoard:public MODBUS{
 public:
-    HomeBoard(ZALUZIE * zaluzie_,int deviceID, SerialPort * serPort);
+    HomeBoard(ZALUZIE * zaluzie_,GPIO_BASE * gpio_, SerialPort * serPort);
     virtual ~HomeBoard();
 
 protected:
     ZALUZIE * zaluzie;
+    GPIO_BASE * gpio;
 
     virtual bool writeCoil(uint16_t address, bool state)override;////<funkce pro zapis vystupů state==true -zapnuto
     virtual bool writeHolding(uint16_t address, uint16_t data)override;

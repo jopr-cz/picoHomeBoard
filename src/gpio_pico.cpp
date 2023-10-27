@@ -38,12 +38,12 @@ GPIO_PICO::GPIO_PICO():GPIO_BASE(){
 
 uint16_t GPIO_PICO::getAddress() const{
     uint32_t addr=0;
-    addr |= (gpio_get(14));
-    addr |= (gpio_get(15) << 1);
-    addr |= (gpio_get(19) << 2);
-    addr |= (gpio_get(20) << 3);
-    addr |= (gpio_get(21) << 4);
-    addr |= (gpio_get(22) << 5);
+    addr |= (!gpio_get(15));
+    addr |= (!gpio_get(14) << 1);
+    addr |= (!gpio_get(19) << 2);
+    addr |= (!gpio_get(20) << 3);
+    addr |= (!gpio_get(21) << 4);
+    addr |= (!gpio_get(22) << 5);
     return addr;
 }
 
