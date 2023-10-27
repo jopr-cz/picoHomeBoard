@@ -17,10 +17,20 @@
 *   | 0x04   | pozice v [%] žaluzie 5 |
 *   | 0x05   | pozice v [%] žaluzie 6 |
 *
+*   
+*   | 0x100 | zaluzie 1 maxDownTime[ms]|
+*   | 0x101 | zaluzie 2 maxDownTime[ms]|
+*   | 0x102 | zaluzie 3 maxDownTime[ms]|
+*   | 0x103 | zaluzie 4 maxDownTime[ms]|
+*   | 0x104 | zaluzie 5 maxDownTime[ms]|
+*   | 0x105 | zaluzie 6 maxDownTime[ms]|
 *
+*
+*       SW version + uptime 32b value
 *   | 0x1000 | SW GIT version  hight 16b|
 *   | 0x1001 | SW GIT version  down  16b|
-*
+*   | 0x1002 | uptime [seconds] hight 16b|
+*   | 0x1003 | uptime [seconds] down 16b|
 *
 *
 *
@@ -63,9 +73,38 @@
 *   1-4 - device ID (modbus)
 *   5- 0=zaluzie,1=topeni
 *   
+    Modbus addr:
+    Topení - adresy modbus 1,2
+    Zaluzie - adresy modbus 1,2,3
+    Adresa 0 - nevalidni pro modbus
+    
 *
 */
 
+
+
+static const ZALUZ_SETTING zaluzSettingArray[] = { 
+    {1000000},        ///< zaluzie 1    modbus addr1
+    {2000000},        ///< zaluzie 2    modbus addr1
+    {3000000},        ///< zaluzie 3    modbus addr1
+    {4000000},        ///< zaluzie 4    modbus addr1
+    {5000000},        ///< zaluzie 5    modbus addr1
+    {6000000},        ///< zaluzie 6    modbus addr1
+
+    {7000000},        ///< zaluzie 7    modbus addr2
+    {8000000},        ///< zaluzie 8    modbus addr2
+    {9000000},        ///< zaluzie 9    modbus addr2
+    {10000000},        ///< zaluzie 10  modbus addr2
+    {11000000},        ///< zaluzie 11  modbus addr2
+    {12000000},        ///< zaluzie 12  modbus addr2
+
+    {13000000},        ///< zaluzie 13  modbus addr 3
+    {14000000},        ///< zaluzie 14  modbus addr 3
+    {15000000},        ///< zaluzie 15  modbus addr 3
+    {16000000},        ///< zaluzie 15  modbus addr 3
+    {17000000},        ///< zaluzie 16  modbus addr 3
+    {18000000}         ///< zaluzie 17  modbus addr 3
+};
 
 
 class HomeBoard:public MODBUS{

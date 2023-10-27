@@ -211,10 +211,10 @@ void ZALUZIE::btnStateChanged(const BUTTON* btn,void * userData) {
 
 
 
-ZALUZIE::ZALUZIE(GPIO_BASE * gpioInterface):BASE_MODUL("zaluzie"),gpio(gpioInterface){
+ZALUZIE::ZALUZIE(GPIO_BASE * gpioInterface,const ZALUZ_SETTING * setting):BASE_MODUL("zaluzie"),gpio(gpioInterface){
 
     for(int i=0;i<ZALUZ_CNT;i++){
-        ZALUZ * zaluz=new ZALUZ(gpio,i);
+        ZALUZ * zaluz=new ZALUZ(gpio,i,setting[i]);
         zaluz->setBtnDown(i*2);
         zaluz->setBtnUp((i*2)+1);
 
@@ -238,6 +238,15 @@ int ZALUZIE::getZaluzPosition(int zaluzIndex) const{
         return 0;
     }
     return zaluzie.at(zaluzIndex)->getPositionPercent();
+}
+
+uint32_t ZALUZIE::getMaxDownTime(int zaluzIndex) const{
+    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
+        printf("Zaluz index out of range\n");
+        return 0;
+    }
+    printf("Getting maxDown of: %d -> %d\n", zaluzIndex,zaluzie.at(zaluzIndex)->getMaxDownTime());
+    return zaluzie.at(zaluzIndex)->getMaxDownTime();
 }
 
 void ZALUZIE::setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex){

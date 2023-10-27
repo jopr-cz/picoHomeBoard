@@ -6,6 +6,10 @@
 #include "base_modul.h"
 #include "gpio.h"
 
+struct ZALUZ_SETTING{
+    uint32_t maxDownTime;
+};
+
 
 class ZALUZ:public BASE_MODUL{
 public:
@@ -17,10 +21,10 @@ public:
     };
 
 
-    ZALUZ(GPIO_BASE * gpioInterface,int index):
+    ZALUZ(GPIO_BASE * gpioInterface,int index, const ZALUZ_SETTING setting):
         BASE_MODUL("zaluz"),
         position(0),
-        maxDownTime(5000000),
+        maxDownTime(setting.maxDownTime),
         hystereze(1000),
         zaluzie_index(index),
         lastProcessedTime(0),
@@ -43,6 +47,7 @@ public:
     void procesMS()override;
     ZALUZ_STATE getState()const{return state;}
     uint8_t getPositionPercent()const;//vrati pozici v pracentech
+    uint32_t getMaxDownTime()const{return maxDownTime;}///<v [uS]
 
     void setBtnUp(int btnIndex){
         btnsUp.push_back(btnIndex);
@@ -88,10 +93,11 @@ private:
 
 class ZALUZIE: public BASE_MODUL{
 public:
-    ZALUZIE(GPIO_BASE * gpioInterface);
+    ZALUZIE(GPIO_BASE * gpioInterface,const ZALUZ_SETTING * setting);
 
     ZALUZ::ZALUZ_STATE getZaluzState(int zaluzIndex) const;
     int getZaluzPosition(int zaluzIndex) const;
+    uint32_t getMaxDownTime(int zaluzIndex) const; ///<v [uS]
 
     void setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex);
     void setPosition(uint16_t newPositionPercentage,int zaluzIndex); // nova zadana pozici v [%]

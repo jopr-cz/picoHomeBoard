@@ -18,18 +18,48 @@
 #include "gpio_pico.h"
 #include "homeBoard.h"
 
+bool address_checker(GPIO_PICO* gpio){
+    int pin=gpio->getAddress();
+    int addr=pin&0x1f;
+
+    if(addr==0)
+        return false;
+
+    if(pin & 0x20){//TOPENI
+        if(addr>2)
+            return false;
+    }else{// ZALUZIE
+        if(addr>3)
+            return false;
+    }
+    return true;
+}
+
+
 int main()
 {
     stdio_init_all();
     int userInput;
+    bool error=false;
     MAIN_HELPER modul_helper;
     
     SerialPico ser(true);
     GPIO_PICO gpio;
     ZALUZIE *zaluzie=nullptr;
 
-    if(!(gpio.getAddress() & 0x20))//zaluzie modul enabled
-        zaluzie=new ZALUZIE(&gpio);
+
+    error=!(address_checker(&gpio));
+    
+    if(!(gpio.getAddress() & 0x20)){//zaluzie modul enabled
+        int offset=gpio.getAddress() & 0x1F;
+        offset--;//adresy zacinaj od 1 (modbus) - pole zacina od 0
+        offset=6*offset;//jedna adresa -> 6 zaluzii
+        if(offset+6 > sizeof(zaluzSettingArray)/sizeof(ZALUZ_SETTING)){
+            error=true;
+        }else{
+            zaluzie=new ZALUZIE(&gpio,zaluzSettingArray+offset);
+        }
+    }
 
     HomeBoard homeBoard(zaluzie,&gpio,&ser);
 
@@ -41,7 +71,10 @@ int main()
     
     static absolute_time_t timestamp;
 
-    gpio.setBlink(1000);
+    if(error)
+        gpio.setBlink(100,50);
+    else
+        gpio.setBlink(1000);
 
     
 
@@ -57,10 +90,11 @@ int main()
                 printf("Address is: %d\n", gpio.getAddress());
             break;
             case 'g':
-                gpio.setOutput(true,3);
+                printf("Test: sizeof %d\n", sizeof(zaluzSettingArray)/sizeof(ZALUZ_SETTING));
             break;
             case 'f':
-                gpio.setOutput(false,3);
+                printf("Test: off   %d\n",(zaluzSettingArray+1)->maxDownTime);
+                printf("Test: off   %d\n",zaluzSettingArray[1].maxDownTime);
             break;
             case 's':
                 ser.sendStr(std::string("AHOJ"));
