@@ -186,6 +186,10 @@ void ZALUZ::procesMS(){
 }
 
 uint8_t ZALUZ::getPositionPercent() const{
+    if(position+hystereze >=maxDownTime)
+        return 100;
+    else if(position-hystereze<=0)
+        return 0;
     return (position*100/maxDownTime);
 }
 

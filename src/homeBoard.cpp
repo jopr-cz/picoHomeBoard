@@ -46,18 +46,21 @@ bool HomeBoard::readDiscreteInput(uint16_t address){
 
 
 int16_t HomeBoard::readHolding(uint16_t addresse){
+    int16_t result=0;
     if(addresse>=0 && addresse<= 0x05 && zaluzie!=nullptr){
-        return zaluzie->getZaluzPosition(addresse);
+        result= zaluzie->getZaluzPosition(addresse);
     }else if (addresse>=0x100 && addresse<=0x105 && zaluzie!=nullptr){
-        return zaluzie->getMaxDownTime(addresse&0xf)/1000;
+        result= zaluzie->getMaxDownTime(addresse&0xf)/1000;
     }else if(addresse==0x1000){
-        return git_version_int()>>16;
+        result= git_version_int()>>16;
     }else if(addresse==0x1001){
-        return git_version_int()&0xffff;
+        result= git_version_int()&0xffff;
     }else if(addresse==0x1002){
-        return timestampS>>16;
+        result= timestampS>>16;
     }else if(addresse==0x1003){
-        return timestampS&0xffff;
+        result= timestampS&0xffff;
     }
-    return 0;
+
+    result=swapEndian(result);
+    return result;
 }

@@ -11,7 +11,7 @@
 #define BAUD_RATE 115200
 #define DATA_BITS 8
 #define STOP_BITS 1
-#define PARITY    UART_PARITY_NONE
+#define PARITY  UART_PARITY_NONE
 
 // We are using pins 0 and 1, but see the GPIO function select table in the
 // datasheet for information on which other pins can be used.
@@ -28,7 +28,9 @@ void on_uart_rx() {
         uint8_t ch = uart_getc(UART_ID);
         // Can we send it back?
         serPico->add2RxBuffer(ch);
+        //printf("rx: 0x%x\n",ch);
     }
+    
 }
 
 SerialPico::SerialPico(bool _rs485): SerialPort(),rs485(_rs485){
@@ -57,6 +59,7 @@ SerialPico::SerialPico(bool _rs485): SerialPort(),rs485(_rs485){
     uart_set_hw_flow(UART_ID, false, false);
 
     // Set our data format
+    //uart_set_format(UART_ID, DATA_BITS, STOP_BITS, PARITY);
     uart_set_format(UART_ID, DATA_BITS, STOP_BITS, PARITY);
 
 
