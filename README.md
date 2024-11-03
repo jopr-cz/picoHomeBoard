@@ -8,6 +8,7 @@ GPIO modul pro řízení žaluzií a topení
 - rs485
 - adresace (min 4b lepe 8b)
 
+
 # Součástky:
 - Rozvaděč podomítkový: (30x19x7.5)   SRp-12 P
 
@@ -16,3 +17,17 @@ GPIO modul pro řízení žaluzií a topení
 # Přemýšlím
 - Napájení pomocí UTP (z hlavního rozvaděče) - zdroj na desce
 - 
+
+# Zapojení
+![zapojeni](doc/zapojeniRJ45.png)
+
+|Vodič|**modbus**|
+|-|-----|
+|1| VDD |
+|2| VDD |
+|3|  -  |
+|4|485-A|
+|5|485-B|
+|6|  -  |
+|7| GND |
+|8| GND |
