@@ -2,7 +2,7 @@
 #define HEADER_H_POU_GPIO_PICO
 
 
-#include "gpio.h"
+#include "gpio_base.h"
 #include "mcp23017.h"
 
 

@@ -9,7 +9,7 @@
 #include "modbus.h"
 
 #include "zaluzie.h"
-#include "gpio.h"
+#include "gpio_base.h"
 #include "homeBoard.h"
 
 int main()
@@ -19,8 +19,8 @@ int main()
     
     SerialLinuxTCP ser;
     GPIO_BASE gpio;
-    ZALUZIE zaluzie(&gpio);
-    HomeBoard homeBoard(&zaluzie,0x05,&ser);
+    ZALUZIE zaluzie(&gpio,zaluzSettingArray);
+    HomeBoard homeBoard(&zaluzie, &gpio,&ser);
 
 
     modul_helper.addModul(&ser);

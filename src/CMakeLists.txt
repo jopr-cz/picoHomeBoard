@@ -9,7 +9,7 @@ else()
     set(SOURCE_FILES ${SOURCE_FILES} main_linux.cpp)
 endif()
 
-set(PROJECT_NAME pocoHomeBoard)
+set(PROJECT_NAME picoHomeBoard)
 
 project(${PROJECT_NAME} C CXX ASM)
 
@@ -18,7 +18,6 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 set(TARGET_LIBS jolib)
-
 
 
 

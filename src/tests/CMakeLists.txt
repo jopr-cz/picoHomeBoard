@@ -24,20 +24,35 @@ enable_testing()
 
 
 # Přidání cíle pro testy
-add_executable(homeBoardTest homeBoardTest.cpp ../zaluzie.cpp ../homeBoard.cpp)
-
+add_executable(homeBoardTest homeBoardTest.cpp ../zaluzie.cpp ../homeBoard.cpp ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp)
+add_executable(zaluzie_test zaluzie_test.cpp ../zaluzie.cpp)
 
 # Přidání knihoven nebo závislostí potřebných pro tvůj program
 target_link_libraries(homeBoardTest PRIVATE jolib linuxSimulator gtest) 
+target_link_libraries(zaluzie_test PRIVATE jolib linuxSimulator gtest) 
 
 include_directories(/usr/src/googletest/googletest/include/) # this is so we can #include <gtest/gtest.h>
 
 # Přidání testovacích skriptů do adresáře s testy
 file(COPY ../jolib/tools/modpool_tester.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
+
 # Přidání testovacího příkazu
 add_test(NAME homeBoardTest COMMAND homeBoardTest)
-
+add_test(NAME zaluzie_test COMMAND zaluzie_test)
 
 include(GoogleTest)
 gtest_discover_tests(homeBoardTest) #
+gtest_discover_tests(zaluzie_test) #
+
+
+
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp
+           ${CMAKE_CURRENT_BINARY_DIR}/_srcVersion.cpp #dummy target - aby se CMD provedl vzdy
+    COMMAND ${CMAKE_COMMAND} -P
+            ${CMAKE_CURRENT_SOURCE_DIR}/../version.cmake)
+
+add_custom_target(run2 ALL #aby se CUSTOM CMD zavolal poro vsechny targety
+    DEPENDS srcVersion.cpp)

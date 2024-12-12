@@ -43,10 +43,12 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
             resetAllStates();
             request.request_valid=true;
             request.position=0;
+            request.shutter=maxShutterTime;
         }else if(btn->doublePressed){
             resetAllStates();
             request.request_valid=true;
             request.position=0;
+            request.shutter=maxShutterTime;
         }else{
             resetAllStates();
             request.request_valid=false;
@@ -58,10 +60,12 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
             resetAllStates();
             request.request_valid=true;
             request.position=maxDownTime;
+            request.shutter=0;
         }else if(btn->doublePressed){
             resetAllStates();
             request.request_valid=true;
             request.position=maxDownTime;
+            request.shutter=0;
         }else{
             resetAllStates();
             request.request_valid=false;
@@ -70,11 +74,11 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
     }
 }
 
-void ZALUZ::setPosition(uint16_t newPositionPercent){
+void ZALUZ::setPosition(uint16_t newPositionPercent, uint16_t newShuttePositionPerent){
     resetAllStates();
     request.request_valid=true;
     request.position=(maxDownTime*newPositionPercent)/100;
-    printf("Zaluzie %d seting position:%d\n",zaluzie_index,request.position);
+    printf("Zaluzie %d seting request position:%d\n",zaluzie_index,request.position);
 }
 
 void ZALUZ::setState(ZALUZ_STATE state)
@@ -84,12 +88,16 @@ void ZALUZ::setState(ZALUZ_STATE state)
     switch (state) {
     case OPEN:
         request.position=0;
+        request.shutter=maxShutterTime;
         break;
     case CLOSE:    
         request.position=maxDownTime;
+        request.shutter=0;
         break;
     case CLOSE_LIGHT:
-        request.position=maxDownTime*0.8;
+        //request.position=maxDownTime*0.8;
+        request.position=maxDownTime;
+        request.shutter=maxShutterTime;
         break;
     default:
         break;
@@ -106,17 +114,14 @@ void ZALUZ::runUp(){
         request.request_valid=false;
         return;
     }
-    
-    uint32_t diff=(timestamp-lastProcessedTime);
-    position -= diff;
-    if(position<0)
-        position=0;
 
-    if(timestamp%100000==0)
-        printf("ZALUZ %d UP %zu -> \n", zaluzie_index,position,request.position);
+    if(shutter_position<maxShutterTime){
+        shutterOpen();
+        return;
+    }
 
-    gpio->setOutput(false,zaluzie_index*2);
-    gpio->setOutput(true,(zaluzie_index*2)+1);
+    setMoveState(MOVE_UP);
+    motor_up();
 }
 
 void ZALUZ::runDown(){
@@ -129,16 +134,13 @@ void ZALUZ::runDown(){
         return;
     }
     
-    uint32_t diff=(timestamp-lastProcessedTime);
-    position += diff;
-    if(position>maxDownTime)
-            position=maxDownTime;
+    if(shutter_position>0){
+        shutterClose();
+        return;
+    }
 
-    if(timestamp%100000==0)
-        printf("ZALUZ %d DOWN %zu -> %zu\n", zaluzie_index,position,request.position);
-    
-    gpio->setOutput(true,zaluzie_index*2);
-    gpio->setOutput(false,(zaluzie_index*2)+1);
+    setMoveState(MOVE_DOWN);
+    motor_down();
 }
 
 
@@ -147,6 +149,85 @@ void ZALUZ::stop(){
         printf("ZALUZ %d STOP %zu\n", zaluzie_index,position);
     isPrinted=true;
 
+    motor_stop();
+    setMoveState(MOVE_NONE);
+}
+
+
+void ZALUZ::shutterOpen(){
+    if(shutter_position>=maxShutterTime){
+        shutter_position=maxShutterTime;
+        printf("ZALUZE %d je ma maximualni naklon OTEVRENO %zu\n",zaluzie_index,shutter_position);
+        return;
+    }
+    
+    setMoveState(SHUTTER_OPEN);
+    motor_up();
+}
+
+
+void ZALUZ::shutterClose(){
+    if(shutter_position<=0){
+        if(shutter_position<0)
+            shutter_position=0;
+        printf("ZALUZE %d je ma minimalni naklon ZAVRENO %zu\n",zaluzie_index,shutter_position);
+        return;
+    }
+    
+    setMoveState(SHUTTER_CLOSE);
+    motor_down();
+}
+
+
+void ZALUZ::countMovePosition(){
+    uint32_t diff=(timestamp-lastProcessedTime);
+    switch (moveState)
+    {
+    case MOVE_DOWN:
+        position += diff;
+        if(position>maxDownTime)
+                position=maxDownTime;
+    break;
+    case MOVE_UP:
+        position -= diff;
+        if(position<0)
+            position=0;
+    break;
+    case SHUTTER_CLOSE:
+        shutter_position -= diff;
+        if(shutter_position<0)///<!Co je asi pod 0 by mělo jit do pozice zaluzie ne?
+            shutter_position =0;
+    break;
+    case SHUTTER_OPEN:
+        shutter_position += diff;
+        if(shutter_position>maxShutterTime)
+            shutter_position=maxShutterTime;
+    break;
+    default:
+        break;
+    }
+
+    if(timestamp%100000==0)
+        printf("ZALUZ %d state:%d pos: %zu -> %zu \t shut:%zu -> %zu \n", zaluzie_index,moveState,position/1000,request.position/1000,shutter_position/1000,request.shutter/1000);
+
+}
+
+void ZALUZ::setMoveState(ZALUZ_MOVE newState){
+    countMovePosition();
+    moveState=newState;
+}
+
+void ZALUZ::motor_up(){
+    gpio->setOutput(false,zaluzie_index*2);
+    gpio->setOutput(true,(zaluzie_index*2)+1);
+}
+
+void ZALUZ::motor_down(){
+    gpio->setOutput(true,zaluzie_index*2);
+    gpio->setOutput(false,(zaluzie_index*2)+1);
+}
+
+void ZALUZ::motor_stop(){
     gpio->setOutput(false,zaluzie_index*2);
     gpio->setOutput(false,(zaluzie_index*2)+1);
 }
@@ -156,11 +237,9 @@ void ZALUZ::resetAllStates(){
     doubleUpRequest=false;
     doubleDownRequest=false;
     request.request_valid=false;
-    
 }
 
 void ZALUZ::process(){
-
     if(request.request_valid){
         isPrinted=false;
         if(position+hystereze<request.position){
@@ -170,14 +249,23 @@ void ZALUZ::process(){
         //}else if(position>request.position){
             runUp();
         }else{
-            request.request_valid=false;
+            //žaluzie je na správné pozici, nyní naklopím na daný úhel
+            //to znamena že motorem trošku ještě zakroutím
+            if(shutter_position+hystereze<request.shutter){
+                shutterOpen();
+            }else if(shutter_position>request.shutter+hystereze){
+                shutterClose();
+            }else{
+                request.request_valid=false;
+                stop();
+                resetAllStates();
+            }
         }
     }else{
         resetAllStates();
         stop();
     }
     lastProcessedTime=timestamp;
-
 }
 
 
@@ -191,6 +279,15 @@ uint8_t ZALUZ::getPositionPercent() const{
     else if(position-hystereze<=0)
         return 0;
     return (position*100/maxDownTime);
+}
+
+
+uint8_t ZALUZ::getShutterPercent() const{
+    if(shutter_position+hystereze >=maxShutterTime)
+        return 100;
+    else if(shutter_position-hystereze<=0)
+        return 0;
+    return (shutter_position*100/maxShutterTime);
 }
 
 //////////////////////////////////////////////////////////////
@@ -215,7 +312,11 @@ void ZALUZIE::btnStateChanged(const BUTTON* btn,void * userData) {
 
 
 
-ZALUZIE::ZALUZIE(GPIO_BASE * gpioInterface,const ZALUZ_SETTING * setting):BASE_MODUL("zaluzie"),gpio(gpioInterface){
+ZALUZIE::ZALUZIE(GPIO_BASE * gpioInterface,const ZALUZ_SETTING * setting, int ZALUZIE_COUNT):
+    BASE_MODUL("zaluzie"),
+    gpio(gpioInterface),
+    ZALUZ_CNT(ZALUZIE_COUNT)
+{
 
     for(int i=0;i<ZALUZ_CNT;i++){
         ZALUZ * zaluz=new ZALUZ(gpio,i,setting[i]);
@@ -242,6 +343,14 @@ int ZALUZIE::getZaluzPosition(int zaluzIndex) const{
         return 0;
     }
     return zaluzie.at(zaluzIndex)->getPositionPercent();
+}
+
+int ZALUZIE::getShutterPosition(int zaluzIndex) const{
+    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
+        printf("Zaluz index out of range\n");
+        return 0;
+    }
+    return zaluzie.at(zaluzIndex)->getShutterPercent();
 }
 
 uint32_t ZALUZIE::getMaxDownTime(int zaluzIndex) const{
