@@ -49,7 +49,8 @@ public:
             
     }
    
-    void setPosition(uint16_t newPositionPercent, uint16_t newShuttePositionPerent=0); // nova zadana pozici v [%] a náklon v [%]
+    void setPosition(uint16_t newPositionPercent); // nova zadana pozici v [%]
+    void setShutter(uint16_t newShuttePositionPerent); // náklon v [%]
     void setState(ZALUZ_STATE state); // jedeme do daneho stavu - např. modbusem
 
     void runUp();//jedeme nahoru
@@ -75,6 +76,7 @@ public:
     uint8_t getPositionPercent()const;//vrati pozici v pracentech
     uint8_t getShutterPercent()const;//vrati pozici v pracentech
     uint32_t getMaxDownTime()const{return maxDownTime;}///<v [uS]
+    uint32_t getMaxShutterTime()const{return maxShutterTime;}///<v [uS]
 
     void setBtnUp(int btnIndex){
         btnsUp.push_back(btnIndex);
@@ -122,6 +124,7 @@ private:
 
     void resetAllStates();
     
+    
     static void btnStateChanged(const BUTTON* btn,void * userData);
     void btnStateChanged(const BUTTON* btn);
 };
@@ -136,9 +139,12 @@ public:
     int getZaluzPosition(int zaluzIndex) const;
     int getShutterPosition(int zaluzIndex) const;
     uint32_t getMaxDownTime(int zaluzIndex) const; ///<v [uS]
+    uint32_t getMaxShutterTime(int zaluzIndex) const; ///<v [uS]
+
 
     void setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex);
-    void setPosition(uint16_t newPositionPercentage,int zaluzIndex); // nova zadana pozici v [%]
+    void setPosition(uint16_t newPositionPercentage, int zaluzIndex); // nova zadana pozici v [%]
+    void setShutter(uint16_t newShutterPercentage, int zaluzIndex); // nova zadana pozici v [%]
 
     GPIO_BASE * getGpio()const {return gpio;}
 protected:
@@ -150,6 +156,7 @@ protected:
     virtual void process()override;
     virtual void procesMS()override;
     static void btnStateChanged(const BUTTON* btn,void * userData);
+    bool chectZaluzIndex(int index)const;
     
     void btnStateChanged(const BUTTON* btn);
 };

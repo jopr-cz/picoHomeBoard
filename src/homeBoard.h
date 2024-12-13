@@ -17,6 +17,13 @@
 *   | 0x04   | pozice v [%] žaluzie 5 |
 *   | 0x05   | pozice v [%] žaluzie 6 |
 *
+*   | 0x10   | pozice shutter v [%] žaluzie 1 -> 0-zataženo, 100%-nejvíce průhledné|
+*   | 0x11   | pozice shutter v [%] žaluzie 2 -> 0-zataženo, 100%-nejvíce průhledné|
+*   | 0x12   | pozice shutter v [%] žaluzie 3 -> 0-zataženo, 100%-nejvíce průhledné|
+*   | 0x13   | pozice shutter v [%] žaluzie 4 -> 0-zataženo, 100%-nejvíce průhledné|
+*   | 0x14   | pozice shutter v [%] žaluzie 5 -> 0-zataženo, 100%-nejvíce průhledné|
+*   | 0x15   | pozice shutter v [%] žaluzie 6 -> 0-zataženo, 100%-nejvíce průhledné|
+*
 *   
 *   | 0x100 | zaluzie 1 maxDownTime[ms]|
 *   | 0x101 | zaluzie 2 maxDownTime[ms]|
@@ -25,6 +32,12 @@
 *   | 0x104 | zaluzie 5 maxDownTime[ms]|
 *   | 0x105 | zaluzie 6 maxDownTime[ms]|
 *
+*   | 0x110 | zaluzie 1 maxShutterTime[ms]|
+*   | 0x111 | zaluzie 2 maxShutterTime[ms]|
+*   | 0x112 | zaluzie 3 maxShutterTime[ms]|
+*   | 0x113 | zaluzie 4 maxShutterTime[ms]|
+*   | 0x114 | zaluzie 5 maxShutterTime[ms]|
+*   | 0x115 | zaluzie 6 maxShutterTime[ms]|
 *
 *       SW version + uptime 32b value
 *   | 0x1000 | SW GIT version  hight 16b|
@@ -84,26 +97,26 @@
 
 
 static const ZALUZ_SETTING zaluzSettingArray[] = { 
-    {1000000},        ///< zaluzie 1    modbus addr1
-    {2000000},        ///< zaluzie 2    modbus addr1
-    {3000000},        ///< zaluzie 3    modbus addr1
-    {4000000},        ///< zaluzie 4    modbus addr1
-    {5000000},        ///< zaluzie 5    modbus addr1
-    {6000000},        ///< zaluzie 6    modbus addr1
+    {1000000, 1000000},        ///< zaluzie 1    modbus addr1
+    {2000000, 1000000},        ///< zaluzie 2    modbus addr1
+    {3000000, 1000000},        ///< zaluzie 3    modbus addr1
+    {4000000, 1000000},        ///< zaluzie 4    modbus addr1
+    {5000000, 1000000},        ///< zaluzie 5    modbus addr1
+    {6000000, 1000000},        ///< zaluzie 6    modbus addr1
 
-    {7000000},        ///< zaluzie 7    modbus addr2
-    {8000000},        ///< zaluzie 8    modbus addr2
-    {9000000},        ///< zaluzie 9    modbus addr2
-    {10000000},        ///< zaluzie 10  modbus addr2
-    {11000000},        ///< zaluzie 11  modbus addr2
-    {12000000},        ///< zaluzie 12  modbus addr2
+    {7000000 , 1000000},        ///< zaluzie 7    modbus addr2
+    {8000000 , 1000000},        ///< zaluzie 8    modbus addr2
+    {9000000 , 1000000},        ///< zaluzie 9    modbus addr2
+    {10000000, 1000000},        ///< zaluzie 10  modbus addr2
+    {11000000, 1000000},        ///< zaluzie 11  modbus addr2
+    {12000000, 1000000},        ///< zaluzie 12  modbus addr2
 
-    {13000000},        ///< zaluzie 13  modbus addr 3
-    {14000000},        ///< zaluzie 14  modbus addr 3
-    {15000000},        ///< zaluzie 15  modbus addr 3
-    {16000000},        ///< zaluzie 15  modbus addr 3
-    {17000000},        ///< zaluzie 16  modbus addr 3
-    {18000000}         ///< zaluzie 17  modbus addr 3
+    {13000000, 1000000},        ///< zaluzie 13  modbus addr 3
+    {14000000, 1000000},        ///< zaluzie 14  modbus addr 3
+    {15000000, 1000000},        ///< zaluzie 15  modbus addr 3
+    {16000000, 1000000},        ///< zaluzie 15  modbus addr 3
+    {17000000, 1000000},        ///< zaluzie 16  modbus addr 3
+    {18000000, 1000000}         ///< zaluzie 17  modbus addr 3
 };
 
 
@@ -116,11 +129,11 @@ protected:
     ZALUZIE * zaluzie;
     GPIO_BASE * gpio;
 
-    virtual bool writeCoil(uint16_t address, bool state)override;////<funkce pro zapis vystupů state==true -zapnuto
-    virtual bool writeHolding(uint16_t address, uint16_t data)override;
-    virtual bool readCoil(uint16_t address) override;
-    virtual bool readDiscreteInput(uint16_t address) override;////<funkce pro čtení vstupů FCE-2
-    virtual int16_t readHolding(uint16_t addresse)override;////<čteni 16bitové slova
+    virtual bool writeCoil(uint16_t address, bool state)override final;////<funkce pro zapis vystupů state==true -zapnuto
+    virtual bool writeHolding(uint16_t address, uint16_t data)override final;
+    virtual bool readCoil(uint16_t address) override final;
+    virtual bool readDiscreteInput(uint16_t address) override final;////<funkce pro čtení vstupů FCE-2
+    virtual int16_t readHolding(uint16_t addresse)override final;////<čteni 16bitové slova
 };
 
 

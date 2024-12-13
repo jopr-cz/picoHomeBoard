@@ -12,13 +12,28 @@
 #include "gpio_base.h"
 #include "homeBoard.h"
 
+class GPIO_LINUX: public GPIO_BASE{
+    public:
+    GPIO_LINUX():GPIO_BASE(){}
+
+    uint16_t getAddress()const override{
+        return 0x01;
+    }
+
+protected:
+    virtual bool setGPIO(int number, bool status) override final{
+        return true;
+    }
+};
+
+
 int main()
 {
     std::cout << "Hello World" << std::endl;
     MAIN_HELPER modul_helper;
     
     SerialLinuxTCP ser;
-    GPIO_BASE gpio;
+    GPIO_LINUX gpio;
     ZALUZIE zaluzie(&gpio,zaluzSettingArray);
     HomeBoard homeBoard(&zaluzie, &gpio,&ser);
 

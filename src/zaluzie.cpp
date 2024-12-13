@@ -74,11 +74,23 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
     }
 }
 
-void ZALUZ::setPosition(uint16_t newPositionPercent, uint16_t newShuttePositionPerent){
-    resetAllStates();
+void ZALUZ::setPosition(uint16_t newPositionPercent){
+    if(request.request_valid==false){//pokud by byl už nějaký request, tak přepíšu jen hodnotu Position
+        resetAllStates();
+    }
     request.request_valid=true;
     request.position=(maxDownTime*newPositionPercent)/100;
-    printf("Zaluzie %d seting request position:%d\n",zaluzie_index,request.position);
+    printf("Zaluzie %d seting request position:%d shutter:%d\n",zaluzie_index,request.position,request.shutter);
+}
+
+
+void ZALUZ::setShutter(uint16_t newShuttePositionPerent){
+    if(request.request_valid==false){//pokud by byl už nějaký request, tak přepíšu jen hodnotu Shutter
+        resetAllStates();
+    }
+    request.request_valid=true;
+    request.shutter=(maxShutterTime*newShuttePositionPerent)/100;
+    printf("Zaluzie %d seting request position:%d shutter:%d\n",zaluzie_index,request.position,request.shutter);
 }
 
 void ZALUZ::setState(ZALUZ_STATE state)
@@ -184,24 +196,30 @@ void ZALUZ::countMovePosition(){
     switch (moveState)
     {
     case MOVE_DOWN:
-        position += diff;
-        if(position>maxDownTime)
-                position=maxDownTime;
+        if(position > maxDownTime - diff){//pretečení
+            position=maxDownTime;
+        }else{
+            position += diff;
+        }
     break;
     case MOVE_UP:
-        position -= diff;
-        if(position<0)
+        if(position<diff)
             position=0;
+        else
+            position -= diff;
     break;
     case SHUTTER_CLOSE:
-        shutter_position -= diff;
-        if(shutter_position<0)///<!Co je asi pod 0 by mělo jit do pozice zaluzie ne?
+        if(shutter_position<diff)  ///<!Co je asi pod 0 by mělo jit do pozice zaluzie ne?
             shutter_position =0;
+        else
+            shutter_position -= diff;
     break;
     case SHUTTER_OPEN:
-        shutter_position += diff;
-        if(shutter_position>maxShutterTime)
+        if(position > maxShutterTime - diff){//pretečení
             shutter_position=maxShutterTime;
+        }else{
+            shutter_position += diff;
+        }
     break;
     default:
         break;
@@ -237,7 +255,11 @@ void ZALUZ::resetAllStates(){
     doubleUpRequest=false;
     doubleDownRequest=false;
     request.request_valid=false;
+    request.position=0;
+    request.shutter=0;
 }
+
+
 
 void ZALUZ::process(){
     if(request.request_valid){
@@ -308,9 +330,13 @@ void ZALUZIE::btnStateChanged(const BUTTON* btn,void * userData) {
     printf("Btn %d change state to: %d\n",btn->btnIndex,btn->isPressed);
 }
 
-
-
-
+bool ZALUZIE::chectZaluzIndex(int index) const{
+    if(index<0 || index>= ZALUZ_CNT){
+        printf("Zaluz index out of range %d\n",index);
+        return false;
+    }
+    return true;
+}
 
 ZALUZIE::ZALUZIE(GPIO_BASE * gpioInterface,const ZALUZ_SETTING * setting, int ZALUZIE_COUNT):
     BASE_MODUL("zaluzie"),
@@ -330,54 +356,64 @@ ZALUZIE::ZALUZIE(GPIO_BASE * gpioInterface,const ZALUZ_SETTING * setting, int ZA
 }
 
 ZALUZ::ZALUZ_STATE ZALUZIE::getZaluzState(int zaluzIndex) const{
-    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
-        printf("Zaluz index out of range\n");
+    if(!chectZaluzIndex(zaluzIndex)){
         return ZALUZ::ZALUZ_STATE();
     }
     return zaluzie.at(zaluzIndex)->getState();
 }
 
 int ZALUZIE::getZaluzPosition(int zaluzIndex) const{
-    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
-        printf("Zaluz index out of range\n");
+    if(!chectZaluzIndex(zaluzIndex)){
         return 0;
     }
     return zaluzie.at(zaluzIndex)->getPositionPercent();
 }
 
 int ZALUZIE::getShutterPosition(int zaluzIndex) const{
-    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
-        printf("Zaluz index out of range\n");
+    if(!chectZaluzIndex(zaluzIndex)){
         return 0;
     }
     return zaluzie.at(zaluzIndex)->getShutterPercent();
 }
 
 uint32_t ZALUZIE::getMaxDownTime(int zaluzIndex) const{
-    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
-        printf("Zaluz index out of range\n");
+    if(!chectZaluzIndex(zaluzIndex)){
         return 0;
     }
     printf("Getting maxDown of: %d -> %d\n", zaluzIndex,zaluzie.at(zaluzIndex)->getMaxDownTime());
     return zaluzie.at(zaluzIndex)->getMaxDownTime();
 }
 
+
+uint32_t ZALUZIE::getMaxShutterTime(int zaluzIndex) const{
+    if(!chectZaluzIndex(zaluzIndex)){
+        return 0;
+    }
+    printf("Getting maxShutter of: %d -> %d\n", zaluzIndex,zaluzie.at(zaluzIndex)->getMaxShutterTime());
+    return zaluzie.at(zaluzIndex)->getMaxShutterTime();
+}
+
 void ZALUZIE::setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex){
-    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
-        printf("Zaluz index out of range\n");
+    if(!chectZaluzIndex(zaluzIndex)){
         return;
     }
     zaluzie[zaluzIndex]->setState(newState);
 }
 
+void ZALUZIE::setShutter(uint16_t newShutterPercentage, int zaluzIndex){
+    if(!chectZaluzIndex(zaluzIndex)){
+        return;
+    }
+    zaluzie[zaluzIndex]->setShutter(newShutterPercentage);
+}
 
 void ZALUZIE::setPosition(uint16_t newPositionPercentage, int zaluzIndex){
-    if(zaluzIndex<0 || zaluzIndex>= ZALUZ_CNT){
-        printf("Zaluz index out of range\n");
+    if(!chectZaluzIndex(zaluzIndex)){
         return;
     }
     zaluzie[zaluzIndex]->setPosition(newPositionPercentage);
 }
+
 
 void ZALUZIE::process(){
     for(int i=0;i<ZALUZ_CNT;i++){
