@@ -46,9 +46,9 @@ bool ZALUZIE_MAIN::writeHolding(uint16_t address, uint16_t data){
 
 
 
-bool ZALUZIE_MAIN::readOneInput(uint16_t address){
+int16_t ZALUZIE_MAIN::readOneInput(uint16_t address){
     const BUTTON * btn=zaluzie->getGpio()->getBtn(address);
     if(btn==NULL)
         return false;
-    return btn->isPressed;
+    return btn->isPressed?0x01:0x00;
 }

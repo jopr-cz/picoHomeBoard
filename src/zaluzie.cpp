@@ -407,6 +407,15 @@ void ZALUZIE::setShutter(uint16_t newShutterPercentage, int zaluzIndex){
     zaluzie[zaluzIndex]->setShutter(newShutterPercentage);
 }
 
+
+
+void ZALUZIE::stop(int zaluzIndex){
+    if(!chectZaluzIndex(zaluzIndex)){
+        return;
+    }
+    zaluzie[zaluzIndex]->stop();
+}
+
 void ZALUZIE::setPosition(uint16_t newPositionPercentage, int zaluzIndex){
     if(!chectZaluzIndex(zaluzIndex)){
         return;

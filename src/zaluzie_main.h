@@ -71,7 +71,7 @@ protected:
     virtual bool writeMultiCoil(uint16_t address, const DATA_BUFFER & states, uint16_t count)override;////<funkce pro zapis vystupů state==true -zapnuto
     virtual bool writeHolding(uint16_t address, uint16_t data)override;
     
-    virtual bool readOneInput(uint16_t address) override;
+    virtual int16_t readOneInput(uint16_t address) override;
 
 };
 

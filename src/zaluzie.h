@@ -145,6 +145,7 @@ public:
     void setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex);
     void setPosition(uint16_t newPositionPercentage, int zaluzIndex); // nova zadana pozici v [%]
     void setShutter(uint16_t newShutterPercentage, int zaluzIndex); // nova zadana pozici v [%]
+    void stop(int zaluzIndex);// zastavi pohyb žaluzie
 
     GPIO_BASE * getGpio()const {return gpio;}
     int getZaluzCnt()const {return ZALUZ_CNT;}

@@ -14,9 +14,7 @@ MQTT_publish::MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset
 
     std::string topic="modbus/set/zaluzie";
     for(int i=0;i<zaluzie->getZaluzCnt();i++){
-        mqtt->subscribe_msg(topic+num2str(i+offset));
-        printf("Subscribe: %d\n",i+offset);
-        
+        mqtt->subscribe_msg(topic+num2str(i+offset+5));
     }
 
 }
@@ -35,9 +33,13 @@ void MQTT_publish::procesMS(){
             std::string number_str = msg.topic.substr(pos); // Extract the substring after "zaluzie"
             int index = std::stoi(number_str);         // Convert it to an integer
             index=index-offset;
-            int value = std::stoi(msg.msg);
-            printf("Settting zaluz %d to %d\n",index,value);
-            zaluzie->setPosition(value,index);
+            if(msg.msg=="STOP"){
+                zaluzie->stop(index);
+            }else{
+                int value = std::stoi(msg.msg);
+                printf("Settting zaluz %d to %d\n",index,value);
+                zaluzie->setPosition(value,index);
+            }
         } else {
             printf("Invalid format of mqqt msg!\n");
         }

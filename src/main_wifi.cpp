@@ -79,8 +79,11 @@ int main()
     GPIO_PICO_W gpio;
     ZALUZIE *zaluzie=nullptr;
 
-    WIFI wifi;
-    MQTT_POU mqtt("192.168.2.42",1883);
+    WIFI wifi("jopr5","ytits1234");
+    MQTT_POU mqtt("192.168.3.30",1885);
+
+    //WIFI wifi("jopr","ytits1234");
+    //MQTT_POU mqtt("192.168.2.42",1883);
 
     modul_helper.addModul(&wifi);
     modul_helper.addModul(&mqtt);
@@ -91,7 +94,7 @@ int main()
         offset=gpio.getAddress() & 0x1F;
         offset--;//adresy zacinaj od 1 (modbus) - pole zacina od 0
         offset=6*offset;//jedna adresa -> 6 zaluzii
-        offset=6;///TEST DEBUG
+        //offset=6;///TEST DEBUG
         if(offset+6 > sizeof(zaluzSettingArray)/sizeof(ZALUZ_SETTING)){
             error=true;
         }else{
