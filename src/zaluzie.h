@@ -147,6 +147,7 @@ public:
     void setShutter(uint16_t newShutterPercentage, int zaluzIndex); // nova zadana pozici v [%]
 
     GPIO_BASE * getGpio()const {return gpio;}
+    int getZaluzCnt()const {return ZALUZ_CNT;}
 protected:
     GPIO_BASE * gpio;
     std::vector<ZALUZ*> zaluzie;

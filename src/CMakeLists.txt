@@ -2,8 +2,19 @@ cmake_minimum_required(VERSION 3.16)
 
 if(CMAKE_CXX_COMPILER MATCHES "arm")
     message("CONFIG FOR RASPERRY PICO")
+    set(PICO_BOARD "pico_w")
     include(pico_sdk_import.cmake)
-    set(SOURCE_FILES  main.cpp serial_pico.cpp gpio_pico.cpp mcp23017.cpp)
+    pico_sdk_init()
+
+    if (PICO_CYW43_SUPPORTED) 
+        set(SOURCE_FILES  main_wifi.cpp mqtt_publisher.cpp)
+        message("WIFI ACTIVATED - main_wifi.cpp ")
+    else()
+        set(SOURCE_FILES  main.cpp)
+        message("WIFI DEACTIVATED - main.cpp")
+    endif()
+
+    set(SOURCE_FILES ${SOURCE_FILES} serial_pico.cpp gpio_pico.cpp mcp23017.cpp)
 else()
     message("CONFIG FOR LINUX")
     set(SOURCE_FILES ${SOURCE_FILES} main_linux.cpp)
@@ -17,10 +28,7 @@ project(${PROJECT_NAME} C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-set(TARGET_LIBS jolib)
-
-
-
+set(TARGET_LIBS jolib jopicolib)
 
 
 set(SOURCE_FILES ${SOURCE_FILES} zaluzie.cpp topeni.cpp homeBoard.cpp ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp )
@@ -28,10 +36,10 @@ set(SOURCE_FILES ${SOURCE_FILES} zaluzie.cpp topeni.cpp homeBoard.cpp ${CMAKE_CU
 add_executable ( ${PROJECT_NAME} ${SOURCE_FILES})
 
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "cortex-m0plus")
-    pico_sdk_init()
+    
 
     pico_enable_stdio_usb(${PROJECT_NAME} 1)
-    pico_enable_stdio_uart(${PROJECT_NAME} 0)
+    pico_enable_stdio_uart(${PROJECT_NAME} 1)
     pico_add_extra_outputs(${PROJECT_NAME})
     #target_link_libraries(${PROJECT_NAME} pico_stdlib jolib)
     set(TARGET_LIBS ${TARGET_LIBS} pico_stdlib hardware_i2c hardware_uart )
@@ -45,7 +53,6 @@ else()
     set(TARGET_LIBS ${TARGET_LIBS} linuxSimulator)
     add_subdirectory(tests)
 endif()
-
 
 
 add_subdirectory(jolib)
