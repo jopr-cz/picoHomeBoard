@@ -161,6 +161,7 @@ void ZALUZ::stop(){
         printf("ZALUZ %d STOP %zu\n", zaluzie_index,position);
     isPrinted=true;
 
+    request.request_valid=false;
     motor_stop();
     setMoveState(MOVE_NONE);
 }
