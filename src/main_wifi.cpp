@@ -83,15 +83,6 @@ int main()
     GPIO_PICO_W gpio;
     ZALUZIE *zaluzie=nullptr;
 
-    WIFI wifi("jopr5","ytits1234");
-    MQTT_POU mqtt("192.168.3.30",1885);
-
-    //WIFI wifi("jopr","ytits1234");
-    //MQTT_POU mqtt("192.168.2.42",1883);
-
-    modul_helper.addModul(&wifi);
-    modul_helper.addModul(&mqtt);
-
     error=!(address_checker(&gpio));
     int offset=0;
     if(!(gpio.getAddress() & 0x20)){//zaluzie modul enabled
@@ -105,6 +96,17 @@ int main()
             zaluzie=new ZALUZIE(&gpio,zaluzSettingArray+offset);
         }
     }
+
+
+    WIFI wifi("jopr5","ytits1234");
+    MQTT_POU mqtt("192.168.3.30",1885,"PicoW"+num2str(offset));
+
+    //WIFI wifi("jopr","ytits1234");
+    //MQTT_POU mqtt("192.168.2.42",1883);
+
+    modul_helper.addModul(&wifi);
+    modul_helper.addModul(&mqtt);
+
 
     HomeBoard homeBoard(zaluzie,&gpio,&ser);
     MQTT_publish mqtt_publisher(&mqtt,zaluzie,offset);
