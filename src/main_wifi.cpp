@@ -45,10 +45,10 @@ bool address_checker(GPIO_PICO* gpio){
 
 class GPIO_PICO_W: public GPIO_PICO{
 public:
-    GPIO_PICO_W():GPIO_PICO(),wifi(nullptr){}
+    GPIO_PICO_W():GPIO_PICO(),blink_modul(nullptr){}
 
-    void setWifi(WIFI * wifi_p){
-        wifi=wifi_p;
+    void setBlinkModul(BASE_MODUL * blink_modul_p){
+        blink_modul=blink_modul_p;
     }
 
 protected:
@@ -57,15 +57,19 @@ protected:
     }
 
     virtual void proces10S()override{
-        if(wifi!=nullptr){
-            if(wifi->errorCode()==0)
+        if(blink_modul!=nullptr){
+            if(blink_modul->errorCode()==0){
+                printf("TEST WIFI EOK\n");
                 setBlink(1000,50);
-            else
+            }else{
+                printf("TEST WIFI ERR %d \n",blink_modul->errorCode());
                 setBlink(100,50);
-        }
+            }
+        }else
+            printf("TEST WIFI IS NULL PTR\n");
     }
 
-    WIFI * wifi;
+    BASE_MODUL * blink_modul;
 };
 
 int main()
@@ -117,8 +121,8 @@ int main()
     if(error)
         gpio.setBlink(800,90);
     else{//pokud neni chyba, tak blink bude blikat podle wifi
-        gpio.setBlink(1000);
-        gpio.setWifi(&wifi);
+        gpio.setBlink(500);
+        gpio.setBlinkModul(&mqtt);
     }
 
 	while (1) {

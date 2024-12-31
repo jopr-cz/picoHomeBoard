@@ -79,7 +79,7 @@ void ZALUZ::setPosition(uint16_t newPositionPercent){
         resetAllStates();
     }
     request.request_valid=true;
-    request.position=(maxDownTime*newPositionPercent)/100;
+    request.position=(maxDownTime/100)*newPositionPercent;
     printf("Zaluzie %d seting request position:%d shutter:%d\n",zaluzie_index,request.position,request.shutter);
 }
 

@@ -97,26 +97,26 @@
 
 
 static const ZALUZ_SETTING zaluzSettingArray[] = { 
-    {1000000, 1000000},        ///< zaluzie 1    modbus addr1
-    {2000000, 1000000},        ///< zaluzie 2    modbus addr1
-    {3000000, 1000000},        ///< zaluzie 3    modbus addr1
-    {4000000, 1000000},        ///< zaluzie 4    modbus addr1
-    {5000000, 1000000},        ///< zaluzie 5    modbus addr1
-    {6000000, 1000000},        ///< zaluzie 6    modbus addr1
+    {120000000, 1000000},        ///< zaluzie 1    modbus addr1
+    {120000000, 1000000},        ///< zaluzie 2    modbus addr1
+    {120000000, 1000000},        ///< zaluzie 3    modbus addr1
+    {120000000, 1000000},        ///< zaluzie 4    modbus addr1
+    {120000000, 1000000},        ///< zaluzie 5    modbus addr1
+    {120000000, 1000000},        ///< zaluzie 6    modbus addr1
 
-    {7000000 , 1000000},        ///< zaluzie 7    modbus addr2
-    {8000000 , 1000000},        ///< zaluzie 8    modbus addr2
-    {9000000 , 1000000},        ///< zaluzie 9    modbus addr2
-    {10000000, 1000000},        ///< zaluzie 10  modbus addr2
-    {11000000, 1000000},        ///< zaluzie 11  modbus addr2
-    {12000000, 1000000},        ///< zaluzie 12  modbus addr2
+    {120000000 , 1000000},        ///< zaluzie 7    modbus addr2
+    {120000000 , 1000000},        ///< zaluzie 8    modbus addr2
+    {120000000 , 1000000},        ///< zaluzie 9    modbus addr2
+    {120000000, 1000000},        ///< zaluzie 10  modbus addr2
+    {120000000, 1000000},        ///< zaluzie 11  modbus addr2
+    {120000000, 1000000},        ///< zaluzie 12  modbus addr2
 
-    {13000000, 1000000},        ///< zaluzie 13  modbus addr 3
-    {14000000, 1000000},        ///< zaluzie 14  modbus addr 3
-    {15000000, 1000000},        ///< zaluzie 15  modbus addr 3
-    {16000000, 1000000},        ///< zaluzie 15  modbus addr 3
-    {17000000, 1000000},        ///< zaluzie 16  modbus addr 3
-    {18000000, 1000000}         ///< zaluzie 17  modbus addr 3
+    {120000000, 1000000},        ///< zaluzie 13  modbus addr 3
+    {120000000, 1000000},        ///< zaluzie 14  modbus addr 3
+    {120000000, 1000000},        ///< zaluzie 15  modbus addr 3
+    {120000000, 1000000},        ///< zaluzie 15  modbus addr 3
+    {120000000, 1000000},        ///< zaluzie 16  modbus addr 3
+    {120000000, 1000000}         ///< zaluzie 17  modbus addr 3
 };
 
 
