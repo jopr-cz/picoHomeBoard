@@ -13,6 +13,9 @@
 
 #define I2C_INSTANCE i2c1
 
+#define OUTPUT_WAIT_TIME_US 100 //hodnota ktera se puzije po zapisu vystupů (aby se např .stihl vypnout rele, zastavit motor atd)
+
+
 MCP23017::MCP23017():initOK(false){
 
     i2c_init(I2C_INSTANCE, 400000);
@@ -31,6 +34,7 @@ bool MCP23017::setOutput(uint64_t outputs){
         if(!initOK)
             return false;
     }
+    
     if(write_dual_registers(0x12, outputs) !=0){//zapis vystupů do bran
         return false;
     }
@@ -68,7 +72,9 @@ int MCP23017::write_dual_registers(uint8_t reg, int value) const{
 			static_cast<uint8_t>(value & 0xff),
 			static_cast<uint8_t>((value>>8) & 0xff)
 	};
+    printf("MCP write 0x%X\n",value);
 	int result = i2c_write_blocking(I2C_INSTANCE, MCP23017_ADDRESS, command, 3, false);
+    busy_wait_us(OUTPUT_WAIT_TIME_US);//propsani do bran
 	if (result == PICO_ERROR_GENERIC) {
 		return result;
 	}

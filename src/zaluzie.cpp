@@ -242,8 +242,8 @@ void ZALUZ::motor_up(){
 }
 
 void ZALUZ::motor_down(){
-    gpio->setOutput(true,zaluzie_index*2);
     gpio->setOutput(false,(zaluzie_index*2)+1);
+    gpio->setOutput(true,zaluzie_index*2);
 }
 
 void ZALUZ::motor_stop(){
