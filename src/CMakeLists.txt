@@ -6,6 +6,7 @@ if(CMAKE_CXX_COMPILER MATCHES "arm")
     include(pico_sdk_import.cmake)
     pico_sdk_init()
 
+    #set(SOURCE_FILES  main_test.cpp)
     if (PICO_CYW43_SUPPORTED) 
         set(SOURCE_FILES  main_wifi.cpp mqtt_publisher.cpp)
         message("WIFI ACTIVATED - main_wifi.cpp ")
@@ -34,6 +35,7 @@ set(TARGET_LIBS jolib jopicolib)
 set(SOURCE_FILES ${SOURCE_FILES} zaluzie.cpp topeni.cpp homeBoard.cpp ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp )
 
 add_executable ( ${PROJECT_NAME} ${SOURCE_FILES})
+
 
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "cortex-m0plus")
     
