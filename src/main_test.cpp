@@ -56,38 +56,51 @@ protected:
 
 class TESTER: public BASE_MODUL{
     public:
-        TESTER(GPIO_BASE * _gpio):BASE_MODUL("tester"),gpio(_gpio),tamAZpet(false){}
+        TESTER(GPIO_BASE * _gpio):BASE_MODUL("tester"),gpio(_gpio),stav(0){}
     protected:
         GPIO_BASE * gpio;
-        bool tamAZpet;
+        int stav;
 
         virtual void proces10S()override{
                 if(gpio==nullptr)
                     return;
-                int setO=0;
-                if(tamAZpet){
-                    setO=1;
-                    tamAZpet==false;
-                }else{
-                    tamAZpet==true;
-                }
 
-                for(int i=0;i<16;i++){
-                    gpio->setOutput((i+setO)%2,i);
+                if(stav==0){
+                    stav=1;
+                    for(int i=0;i<16;i++){
+                        gpio->setOutput(i%2,i);
+                    }
+                }else if(stav==1){
+                    stav=2;
+                    for(int i=0;i<16;i++){
+                        gpio->setOutput(0,i);
+                    }
+                }else if(stav==2){
+                    for(int i=0;i<16;i++){
+                        gpio->setOutput((i+1)%2,i);
+                    }
+                    stav=3;
+                } else {
+                    for(int i=0;i<16;i++){
+                        gpio->setOutput(0,i);
+                    }
+                    stav=0;
                 }
-
         }
 };
 
 int main()
 {
     stdio_init_all();
+    cyw43_arch_init();
     int userInput;
     bool error=false;
     MAIN_HELPER modul_helper;
     GPIO_PICO_W gpio;
+    TESTER test(&gpio);
     
     modul_helper.addModul(&gpio);
+    modul_helper.addModul(&test);
     
     static absolute_time_t timestamp;
 
