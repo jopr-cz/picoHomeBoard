@@ -1,5 +1,6 @@
 #include "zaluzie.h"
 
+#include "hardware/timer.h"
 
 void ZALUZ::btnStateChanged(const BUTTON *btn, void *userData)
 {
@@ -194,6 +195,8 @@ void ZALUZ::shutterClose(){
 
 void ZALUZ::countMovePosition(){
     uint32_t diff=(timestamp-lastProcessedTime);
+    diff=diff-motorDelayTime;//odectu cas kdy jsem cekal
+    motorDelayTime=0;
     switch (moveState)
     {
     case MOVE_DOWN:
@@ -237,18 +240,24 @@ void ZALUZ::setMoveState(ZALUZ_MOVE newState){
 }
 
 void ZALUZ::motor_up(){
+    uint32_t start=time_us_64();
     gpio->setOutput(false,zaluzie_index*2);
     gpio->setOutput(true,(zaluzie_index*2)+1);
+    motorDelayTime+= time_us_64() - start;
 }
 
 void ZALUZ::motor_down(){
+    uint32_t start=time_us_64();
     gpio->setOutput(false,(zaluzie_index*2)+1);
     gpio->setOutput(true,zaluzie_index*2);
+    motorDelayTime+= time_us_64() - start;
 }
 
 void ZALUZ::motor_stop(){
+    uint32_t start=time_us_64();
     gpio->setOutput(false,zaluzie_index*2);
     gpio->setOutput(false,(zaluzie_index*2)+1);
+    motorDelayTime+= time_us_64() - start;
 }
 
 
