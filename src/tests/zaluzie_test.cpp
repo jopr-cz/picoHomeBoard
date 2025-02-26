@@ -138,14 +138,15 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, ZaluzieBTNParameterizedTest, testing::Val
     //TL - 0x0001 - dolu    -zaluzie index 0
     //TL - 0x0002 - nahoru  -zaluzie index 0
     //pozice-test, shutterPos, totalTimout[S],{gpio, time},{zaluzPosition, time}
-    TestBtnData{0,   -1,   10, {{0x2, 100}, {2, 200}}, {}},
-    TestBtnData{100, -1,   10, {{0x1, 2000}},{}},
-    TestBtnData{75,  -1,   10, {{0x1, 1000}, {0x2, 7000},{0x0, 9000}},{}},
-    TestBtnData{100,  0,   10, {}, {{100,3000}}},
+    TestBtnData{0,   0,    10, {{0x2, 100}, {2, 200}}, {}},
+    TestBtnData{100, 100,  10, {{0x1, 2000}},{}},
+    TestBtnData{75,   0,   10, {{0x1, 1000}, {0x2, 7000},{0x0, 9000}},{}},
+    TestBtnData{100, 100,  10, {}, {{100,3000}}},
     TestBtnData{80,   0,   10, {}, {{80,3000}}},
     TestBtnData{0,    0,   10, {}, {{80,1000},{0,5000}}},
-    TestBtnData{100, -1,   10, {}, {{80,1000},{100,6000}}},
-    TestBtnData{0,   -1,   12, {{0x1, 100}, {0x2, 6000}},{}},//uplně dolů a pak uplně nahoru
+    TestBtnData{100, 100,   10, {}, {{80,1000},{100,6000}}},
+    TestBtnData{0,    0,   12, {{0x1, 100}, {0x2, 6000}},{}},//uplně dolů a pak uplně nahoru
+    TestBtnData{100,  0,   12, {{0x1, 100}, {0x2, 7000}, {0x0, 8000}},{}},//žaluzie zataženy ale na průduch
     TestBtnData{0,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
 ));
 

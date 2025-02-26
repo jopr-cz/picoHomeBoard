@@ -42,12 +42,12 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
             resetAllStates();
             request.request_valid=true;
             request.position=0;
-            request.shutter=maxShutterTime;
+            request.shutter=0;
         }else if(btn->doublePressed){
             resetAllStates();
             request.request_valid=true;
             request.position=0;
-            request.shutter=maxShutterTime;
+            request.shutter=0;
         }else{
             resetAllStates();
             request.request_valid=false;
@@ -59,16 +59,16 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
             resetAllStates();
             request.request_valid=true;
             request.position=maxDownTime;
-            request.shutter=0;
+            request.shutter=maxShutterTime;
         }else if(btn->doublePressed){
             resetAllStates();
             request.request_valid=true;
             request.position=maxDownTime;
-            request.shutter=0;
+            request.shutter=maxShutterTime;
         }else{
             resetAllStates();
             request.request_valid=false;
-            request.position=0;
+            request.position=maxShutterTime;
         }
     }
 }
@@ -79,8 +79,10 @@ void ZALUZ::setPosition(uint16_t newPositionPercent){
     }
     request.request_valid=true;
     request.position=(maxDownTime/100)*newPositionPercent;
-    //if(request.position==0)//pokud zavřu, tak nechám shutter na 0(otevřený) -> žaluzije je zajetá
-    //    request.shutter=0;
+    if(request.position==0)//pokud zavřu, tak nechám shutter na 0(otevřený) -> žaluzije je zajetá
+        request.shutter=0;
+    else if(newPositionPercent==100)//pokud zavřu, tak nechám shutter na 0(otevřený) -> žaluzije je zajetá
+        request.shutter=maxShutterTime;
     printf("Zaluzie %d seting request position:%u shutter:%u act:%u shut:%u\n",zaluzie_index,request.position,request.shutter,position,shutter_position);
 }
 
@@ -128,7 +130,7 @@ void ZALUZ::runUp(){
         return;
     }
 
-    if(shutter_position<maxShutterTime){
+    if(shutter_position>0){
         shutterOpen();
         return;
     }
@@ -147,7 +149,7 @@ void ZALUZ::runDown(){
         return;
     }
     
-    if(shutter_position>0){
+    if(shutter_position<maxShutterTime){
         shutterClose();
         return;
     }
@@ -169,9 +171,10 @@ void ZALUZ::stop(){
 
 
 void ZALUZ::shutterOpen(){
-    if(shutter_position>=maxShutterTime){
-        shutter_position=maxShutterTime;
-        printf("ZALUZE %d je ma maximualni naklon OTEVRENO %u\n",zaluzie_index,shutter_position);
+    if(shutter_position<=0){
+        if(shutter_position<0)
+            shutter_position=0;
+        printf("ZALUZE %d je ma minimalni naklon ZAVRENO %u\n",zaluzie_index,shutter_position);
         return;
     }
     
@@ -181,10 +184,9 @@ void ZALUZ::shutterOpen(){
 
 
 void ZALUZ::shutterClose(){
-    if(shutter_position<=0){
-        if(shutter_position<0)
-            shutter_position=0;
-        printf("ZALUZE %d je ma minimalni naklon ZAVRENO %u\n",zaluzie_index,shutter_position);
+    if(shutter_position>=maxShutterTime){
+        shutter_position=maxShutterTime;
+        printf("ZALUZE %d je ma maximualni naklon OTEVRENO %u\n",zaluzie_index,shutter_position);
         return;
     }
     
@@ -211,17 +213,17 @@ void ZALUZ::countMovePosition(){
             position -= diff;
     break;
     case SHUTTER_CLOSE:
-        if(shutter_position<diff)  ///<!Co je asi pod 0 by mělo jit do pozice zaluzie ne?
-            shutter_position =0;
-        else
-            shutter_position -= diff;
-    break;
-    case SHUTTER_OPEN:
         if(shutter_position > maxShutterTime - diff){//pretečení
             shutter_position=maxShutterTime;
         }else{
             shutter_position += diff;
         }
+    break;
+    case SHUTTER_OPEN:
+        if(shutter_position<diff)  ///<!Co je asi pod 0 by mělo jit do pozice zaluzie ne?
+            shutter_position =0;
+        else
+            shutter_position -= diff;
     break;
     default:
         break;
@@ -276,9 +278,9 @@ void ZALUZ::process(){
             //žaluzie je na správné pozici, nyní naklopím na daný úhel
             //to znamena že motorem trošku ještě zakroutím
             if(shutter_position+hystereze<request.shutter){
-                shutterOpen();
-            }else if(shutter_position>request.shutter+hystereze){
                 shutterClose();
+            }else if(shutter_position>request.shutter+hystereze){
+                shutterOpen();
             }else{
                 request.request_valid=false;
                 stop();

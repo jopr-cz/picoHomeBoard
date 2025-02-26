@@ -35,7 +35,7 @@ public:
         BASE_MODUL("zaluz"),
         position(0),
         maxDownTime(setting.maxDownTime),
-        shutter_position(setting.maxShutterTime),//predpokladam ze zaluzie jou zavinute tedy museli byt shuttle otevřen ->max
+        shutter_position(0),//predpokladam ze zaluzie jou zavinute tedy museli byt shuttle otevřen ->max
         maxShutterTime(setting.maxShutterTime),
         hystereze(1000),
         zaluzie_index(index),
