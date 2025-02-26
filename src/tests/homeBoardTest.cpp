@@ -36,8 +36,15 @@ struct GPIO_SETTING{
 
 struct ZALUZ_STATE_SETTING{
     ZALUZ::ZALUZ_STATE newPosition;
-    int timeMS;
+    unsigned int timeMS;
     bool processed;//toto je pro uziti testovaci funkce (aby nevolala dokola setState)
+    ZALUZ_STATE_SETTING(ZALUZ::ZALUZ_STATE new_Pos,unsigned int timeMS):
+        newPosition(new_Pos),
+        timeMS(timeMS),
+        processed(false)
+    {
+
+    }
 };
 
 struct TestBtnData {
@@ -56,8 +63,10 @@ TEST_P(HomeBoardParamTest, HomeBoardParamTest){
     GPIO_TEST gpio;
     SerialLinuxTCP serial;
 
-    static const ZALUZ_SETTING zalSeting[] = { 
-        {4000000,1000000}        ///< zaluzie 1    
+    static const ZALUZ_SETTING zalSeting[] = {
+        {4000000,1000000},        ///< zaluzie 1
+        {4000000,1000000},
+        {4000000,1000000}
     };
 
     const int ZaluzIndex=0;//index zaluzie na ktery budu brat dotazy 
@@ -121,31 +130,31 @@ TEST_P(HomeBoardParamTest, HomeBoardParamTest){
 }
 
 
+
 INSTANTIATE_TEST_SUITE_P(InlineValues, HomeBoardParamTest, testing::Values(
     //TL - 0x0004 - dolu    -zaluzie index 1
     //TL - 0x0008 - nahoru  -zaluzie index 1
     //TL - 0x0001 - dolu    -zaluzie index 0
     //TL - 0x0002 - nahoru  -zaluzie index 0
     ////////pozice, shutterPos, totalTimout[S],{gpio, time},{zaluzState, time}
-    TestBtnData{0,     -1,     10, {{0x002, 100}, {2, 200}}},
-    TestBtnData{100,   -1,     10, {{0x0001, 2000}}},
-    TestBtnData{0,     -1,     10, {{0x0001, 1000}, {0x0002, 5000} }},
-    TestBtnData{75,    -1,     11, {{0x0001, 2000}, {0x0002, 8000},{0x0000, 10000}}},
+    TestBtnData{0,     -1,     10, {{0x2, 100}, {2, 200}},{}},
+    TestBtnData{100,   -1,     10, {{0x1, 2000}},{}},
+    TestBtnData{0,     -1,     10, {{0x1, 1000}, {0x2, 5000} },{}},
+    TestBtnData{75,    -1,     11, {{0x1, 2000}, {0x2, 8000},{0x0, 10000}},{}},
     TestBtnData{100,   -1,     10, {}, {{ZALUZ::CLOSE,3000}}},
-    TestBtnData{0,     -1,     10, {}, {{ZALUZ::CLOSE_LIGHT,1000},{ZALUZ::OPEN,6000}}},
-    
+    TestBtnData{0,     -1,     10, {}, {{ZALUZ::CLOSE_LIGHT,1000},{ZALUZ::OPEN,5000}}},
+
     //Test naklonu zaluzii
     TestBtnData{100,   0,       8, {}, {{ZALUZ::CLOSE,100}}},
     TestBtnData{100,   100,     8, {}, {{ZALUZ::CLOSE_LIGHT,100}}},
-    
-    
+
+
     //Test shutteru
-    TestBtnData{100,   0,   8, {{0x001, 100} }},
-    TestBtnData{0,   100,  12, {{0x0001, 1000}, {0x0002, 5000} }},
-    TestBtnData{100,   50,  12, {{0x0001, 100}, {0x0002, 7000} , {0x0000, 7500} }},//sjedu dolu a pak kliknu na natočení žaluzii
+    TestBtnData{100,   0,   8, {{0x1, 100} },{}},
+    TestBtnData{0,   100,  12, {{0x1, 1000}, {0x2, 5000} },{}},
+    TestBtnData{100,   50,  12, {{0x1, 100}, {0x2, 7000} , {0x0, 7500} },{}},//sjedu dolu a pak kliknu na natočení žaluzii
 
-
-    TestBtnData{0,     -1,     10, {{0x002, 100}, {2, 200}}}
+    TestBtnData{0,     -1,     10, {{0x2, 100}, {2, 200}},{}}
 ));
 
 

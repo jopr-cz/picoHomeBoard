@@ -29,7 +29,7 @@ project(${PROJECT_NAME} C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
-set(TARGET_LIBS jolib jopicolib)
+set(TARGET_LIBS jolib)
 
 
 set(SOURCE_FILES ${SOURCE_FILES} zaluzie.cpp topeni.cpp homeBoard.cpp ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp )
@@ -44,7 +44,7 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "cortex-m0plus")
     pico_enable_stdio_uart(${PROJECT_NAME} 0)
     pico_add_extra_outputs(${PROJECT_NAME})
     #target_link_libraries(${PROJECT_NAME} pico_stdlib jolib)
-    set(TARGET_LIBS ${TARGET_LIBS} pico_stdlib hardware_i2c hardware_uart )
+    set(TARGET_LIBS ${TARGET_LIBS} jopicolib pico_stdlib hardware_i2c hardware_uart )
 
     add_custom_target(pouDeploy_${PROJECT_NAME}
                 DEPENDS ${PROJECT_NAME}

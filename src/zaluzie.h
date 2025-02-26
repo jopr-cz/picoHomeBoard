@@ -40,7 +40,6 @@ public:
         hystereze(1000),
         zaluzie_index(index),
         lastProcessedTime(0),
-        motorDelayTime(0),
         state(OPEN),
         moveState(MOVE_NONE),
         gpio(gpioInterface),
@@ -102,7 +101,6 @@ private:
     const uint16_t hystereze;///< počet [us] pri srovnavani pozice (position)
     int zaluzie_index;
     uint64_t lastProcessedTime;///< timestam posledniho volani process()funkce
-    uint64_t motorDelayTime;///< cas k prepnuti motoru- mezi zastavenim a rozjezdem musi byt cas, ten se potom odecte od casu navijeni odvijeni
 
     ZALUZ_STATE state;
     ZALUZ_MOVE moveState;

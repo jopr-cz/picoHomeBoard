@@ -19,8 +19,11 @@ public:
     virtual ~GPIO_TEST(){};
     uint16_t gpio_in;
 protected:
-    uint16_t getBtnInputState()override{
+    uint16_t getBtnInputState()override final{
         return gpio_in;
+    }
+    bool setGPIO(int number, bool status)override final{
+        return true;
     }
 };
 
@@ -32,13 +35,21 @@ struct GPIO_SETTING{
 
 struct ZALUZ_STATE_SETTING{
     uint8_t newPosition;
-    int timeMS;
+    unsigned int timeMS;
     bool processed;//toto je pro uziti testovaci funkce (aby nevolala dokola setState)
+    ZALUZ_STATE_SETTING(int new_Pos,unsigned int timeMS):
+        newPosition(new_Pos),
+        timeMS(timeMS),
+        processed(false)
+    {
+
+    }
 };
 
 struct TestBtnData {
     int expectedZalusPosition;
-    int totalTimeoutS;
+    int expectedShutterPosition;
+    unsigned int totalTimeoutS;
     std::vector<GPIO_SETTING> gpios;
     std::vector<ZALUZ_STATE_SETTING> zaluz_state;
 };
@@ -48,12 +59,17 @@ class ZaluzieBTNParameterizedTest : public testing::TestWithParam<TestBtnData> {
 
 TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
     static const ZALUZ_SETTING zaluzSettingArray[] = { 
-        {1000000}
+        {4000000,1000000},
+        {4000000,1000000},
+        {4000000,1000000}
     };
+
+    const int ZaluzIndex=0;//index zaluzie na ktery budu brat dotazy
+
     MAIN_HELPER modul_helper;
     GPIO_TEST gpio;
     modul_helper.addModul(&gpio);
-    ZALUZIE zaluzie(&gpio,zaluzSettingArray);
+    ZALUZIE zaluzie(&gpio,zaluzSettingArray,ZaluzIndex+1);
     modul_helper.addModul(&zaluzie);
     
     struct timespec start_time, end_time;
@@ -77,13 +93,14 @@ TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
         modul_helper.loop(timestampUs);
 
         for(auto gp:data.gpios){
-            if(timestamMS==gp.timeMS)
+            if(timestamMS==gp.timeMS){
                 gpio.gpio_in=gp.gpio2set;
+            }
         }
 
         for(auto& state:data.zaluz_state){
             if(timestamMS==state.timeMS && state.processed==false){
-                zaluzie.setPosition(state.newPosition,1);
+                zaluzie.setPosition(state.newPosition,ZaluzIndex);
                 state.processed=true;
             }
         }
@@ -93,21 +110,33 @@ TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
         //if(data.expectedZalusPosition==zaluzie.getZaluzPosition(1))
         //    break;
     }
-    EXPECT_EQ(data.expectedZalusPosition,zaluzie.getZaluzPosition(1));
+
+    EXPECT_GE(data.expectedZalusPosition+1,zaluzie.getZaluzPosition(ZaluzIndex));
+    EXPECT_LE(data.expectedZalusPosition-1,zaluzie.getZaluzPosition(ZaluzIndex));
+
+    if(data.expectedShutterPosition>=0){
+        EXPECT_GE(data.expectedShutterPosition+1,zaluzie.getShutterPosition(ZaluzIndex));
+        EXPECT_LE(data.expectedShutterPosition-1,zaluzie.getShutterPosition(ZaluzIndex));
+    }
 }
 
 
 INSTANTIATE_TEST_SUITE_P(InlineValues, ZaluzieBTNParameterizedTest, testing::Values(
-    //pozice-test, totalTimout[S],{gpio, time},{zaluzPosition, time}
-    TestBtnData{0,      10, {{0x008, 100}, {2, 200}}},
-    TestBtnData{100,    10, {{0x0004, 2000}}},
-    TestBtnData{80,     10, {{0x0004, 2000}, {0x0008, 8000},{0x0000, 9000}}},
-    TestBtnData{100,    10, {}, {{100,3000}}},
-    TestBtnData{80,     10, {}, {{80,3000}}},
-    TestBtnData{0,      10, {}, {{80,1000},{0,6000}}},
-    TestBtnData{100,    10, {}, {{80,1000},{100,6000}}},
+    //TL - 0x0004 - dolu    -zaluzie index 1
+    //TL - 0x0008 - nahoru  -zaluzie index 1
+    //TL - 0x0001 - dolu    -zaluzie index 0
+    //TL - 0x0002 - nahoru  -zaluzie index 0
+    //pozice-test, shutterPos, totalTimout[S],{gpio, time},{zaluzPosition, time}
+    TestBtnData{0,   -1,   10, {{0x2, 100}, {2, 200}}, {}},
+    TestBtnData{100, -1,   10, {{0x1, 2000}},{}},
+    TestBtnData{75,  -1,   10, {{0x1, 1000}, {0x2, 7000},{0x0, 9000}},{}},
+    TestBtnData{100,  0,  10, {}, {{100,3000}}},
+    TestBtnData{80,   0,   10, {}, {{80,3000}}},
+    TestBtnData{0,    0,   10, {}, {{80,1000},{0,5000}}},
+    TestBtnData{100, -1,   10, {}, {{80,1000},{100,6000}}},
+    TestBtnData{0,   -1,   12, {{0x1, 100}, {0x2, 6000}},{}},//uplně dolů a pak uplně nahoru
+    TestBtnData{0,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
 
-    TestBtnData{0,      10, {{0x008, 100}, {2, 200}},{}}
 ));
 
 
