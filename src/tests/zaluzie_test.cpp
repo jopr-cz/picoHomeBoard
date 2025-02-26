@@ -30,7 +30,13 @@ protected:
 
 struct GPIO_SETTING{
     int gpio2set;
-    int timeMS;
+    unsigned int timeMS;
+    bool processed;
+    GPIO_SETTING(int gpio_Set,unsigned int time_MS):
+        gpio2set(gpio_Set),
+        timeMS(time_MS),
+        processed(false)
+    {}
 };
 
 struct ZALUZ_STATE_SETTING{
@@ -58,11 +64,12 @@ class ZaluzieBTNParameterizedTest : public testing::TestWithParam<TestBtnData> {
 };
 
 TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
-    static const ZALUZ_SETTING zaluzSettingArray[] = { 
+    static const ZALUZ_SETTING zaluzSettingArray[] = {
         {4000000,1000000},
         {4000000,1000000},
         {4000000,1000000}
     };
+
 
     const int ZaluzIndex=0;//index zaluzie na ktery budu brat dotazy
 
@@ -89,12 +96,16 @@ TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
     while(true){
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         timestampUs= (end_time.tv_sec - start_time.tv_sec) * 1000000LL + (end_time.tv_nsec - start_time.tv_nsec) / 1000LL;
+
+        timestampUs=timestampUs*100;//zrychlení času
+
         timestamMS=timestampUs/1000;
         modul_helper.loop(timestampUs);
 
         for(auto gp:data.gpios){
-            if(timestamMS==gp.timeMS){
+            if(timestamMS>gp.timeMS && gp.processed==false){
                 gpio.gpio_in=gp.gpio2set;
+                gp.processed=true;
             }
         }
 
@@ -130,13 +141,12 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, ZaluzieBTNParameterizedTest, testing::Val
     TestBtnData{0,   -1,   10, {{0x2, 100}, {2, 200}}, {}},
     TestBtnData{100, -1,   10, {{0x1, 2000}},{}},
     TestBtnData{75,  -1,   10, {{0x1, 1000}, {0x2, 7000},{0x0, 9000}},{}},
-    TestBtnData{100,  0,  10, {}, {{100,3000}}},
+    TestBtnData{100,  0,   10, {}, {{100,3000}}},
     TestBtnData{80,   0,   10, {}, {{80,3000}}},
     TestBtnData{0,    0,   10, {}, {{80,1000},{0,5000}}},
     TestBtnData{100, -1,   10, {}, {{80,1000},{100,6000}}},
     TestBtnData{0,   -1,   12, {{0x1, 100}, {0x2, 6000}},{}},//uplně dolů a pak uplně nahoru
     TestBtnData{0,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
-
 ));
 
 

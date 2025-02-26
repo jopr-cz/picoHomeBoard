@@ -95,6 +95,9 @@ TEST_P(HomeBoardParamTest, HomeBoardParamTest){
     while(true){
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         timestampUs= (end_time.tv_sec - start_time.tv_sec) * 1000000LL + (end_time.tv_nsec - start_time.tv_nsec) / 1000LL;
+
+        timestampUs=timestampUs*100;//zrychlení času
+
         timestamMS=timestampUs/1000;
         modul_helper.loop(timestampUs);
 

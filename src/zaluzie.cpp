@@ -79,9 +79,9 @@ void ZALUZ::setPosition(uint16_t newPositionPercent){
     }
     request.request_valid=true;
     request.position=(maxDownTime/100)*newPositionPercent;
-    if(request.position==0)//pokud zavřu, tak nechám shutter na 0(otevřený) -> žaluzije je zajetá
-        request.shutter=0;
-    printf("Zaluzie %d seting request position:%u shutter:%u\n",zaluzie_index,request.position,request.shutter);
+    //if(request.position==0)//pokud zavřu, tak nechám shutter na 0(otevřený) -> žaluzije je zajetá
+    //    request.shutter=0;
+    printf("Zaluzie %d seting request position:%u shutter:%u act:%u shut:%u\n",zaluzie_index,request.position,request.shutter,position,shutter_position);
 }
 
 
