@@ -12,8 +12,12 @@ struct ZALUZ_SETTING{
 };
 
 
+
 class ZALUZ:public BASE_MODUL{
 public:
+
+    static constexpr uint64_t motorTotalDelayTime = 500*1000;///<čas v [uS] mezi vypnutim motoru a zapnutim
+
  
     enum ZALUZ_STATE{
         OPEN,   // otevreno 
@@ -28,6 +32,7 @@ public:
         MOVE_DOWN,///<odmotavam
         SHUTTER_OPEN,///<otviram (motor nahoru)
         SHUTTER_CLOSE,///<zaviram (motor dolu)
+        MOTOR_WAITING,///<cekání na přepnutí směru motoru ↑ ↓ - motor se netočí!
     };
 
 
@@ -40,6 +45,7 @@ public:
         hystereze(1000),
         zaluzie_index(index),
         lastProcessedTime(0),
+        motorStopTime(0),
         state(OPEN),
         moveState(MOVE_NONE),
         gpio(gpioInterface),
@@ -101,6 +107,9 @@ private:
     const uint16_t hystereze;///< počet [us] pri srovnavani pozice (position)
     int zaluzie_index;
     uint64_t lastProcessedTime;///< timestam posledniho volani process()funkce
+
+    uint64_t motorStopTime;///<kdy byl motor zastaven
+
 
     ZALUZ_STATE state;
     ZALUZ_MOVE moveState;

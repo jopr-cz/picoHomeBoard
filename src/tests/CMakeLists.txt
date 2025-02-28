@@ -26,10 +26,12 @@ enable_testing()
 # Přidání cíle pro testy
 add_executable(homeBoardTest homeBoardTest.cpp ../zaluzie.cpp ../homeBoard.cpp ${CMAKE_CURRENT_BINARY_DIR}/srcVersion.cpp)
 add_executable(zaluzie_test zaluzie_test.cpp ../zaluzie.cpp)
+add_executable(motor_test motor_test.cpp ../zaluzie.cpp)
 
 # Přidání knihoven nebo závislostí potřebných pro tvůj program
 target_link_libraries(homeBoardTest PRIVATE jolib linuxSimulator gtest) 
 target_link_libraries(zaluzie_test PRIVATE jolib linuxSimulator gtest) 
+target_link_libraries(motor_test PRIVATE jolib linuxSimulator gtest)
 
 include_directories(/usr/src/googletest/googletest/include/) # this is so we can #include <gtest/gtest.h>
 
@@ -44,6 +46,7 @@ add_test(NAME zaluzie_test COMMAND zaluzie_test)
 include(GoogleTest)
 gtest_discover_tests(homeBoardTest) #
 gtest_discover_tests(zaluzie_test) #
+gtest_discover_tests(motor_test) #
 
 
 
