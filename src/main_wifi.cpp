@@ -98,10 +98,10 @@ int main()
     }
 
 
-    WIFI wifi("jopr5","ytits1234");
+    WIFI wifi("jopr6","ytits1234");
+    //WIFI wifi("jopr5","ytits1234");
     MQTT_POU mqtt("192.168.3.30",1885,"PicoW"+num2str(offset));
 
-    //WIFI wifi("jopr","ytits1234");
     //MQTT_POU mqtt("192.168.2.42",1883);
 
     modul_helper.addModul(&wifi);

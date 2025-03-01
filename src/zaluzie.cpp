@@ -397,6 +397,13 @@ ZALUZ::ZALUZ_STATE ZALUZIE::getZaluzState(int zaluzIndex) const{
     return zaluzie.at(zaluzIndex)->getState();
 }
 
+ZALUZ::ZALUZ_MOVE ZALUZIE::getZaluzMove(int zaluzIndex) const{
+    if(!chectZaluzIndex(zaluzIndex)){
+        return ZALUZ::ZALUZ_MOVE();
+    }
+    return zaluzie.at(zaluzIndex)->getMoveState();
+}
+
 int ZALUZIE::getZaluzPosition(int zaluzIndex) const{
     if(!chectZaluzIndex(zaluzIndex)){
         return 0;

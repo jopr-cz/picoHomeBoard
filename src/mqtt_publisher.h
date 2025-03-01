@@ -14,8 +14,8 @@ public:
 protected:
     MQTT_POU * mqtt;
     ZALUZIE *  zaluzie;
-    int current_public_index;//-1 žádny
     int offset;//žaluziovy ofset žaluzie č. = offset + žaluz číslo
+
 
     virtual void procesMS()override;
     virtual void procesS()override;

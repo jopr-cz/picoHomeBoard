@@ -71,6 +71,7 @@ public:
 
     void countMovePosition();
     void setMoveState(ZALUZ_MOVE newState);
+    ZALUZ_MOVE getMoveState()const {return moveState;}
 
     void motor_up();
     void motor_down();
@@ -145,6 +146,7 @@ public:
     ZALUZIE(GPIO_BASE * gpioInterface,const ZALUZ_SETTING * setting, int ZALUZIE_COUNT=6);
 
     ZALUZ::ZALUZ_STATE getZaluzState(int zaluzIndex) const;
+    ZALUZ::ZALUZ_MOVE getZaluzMove(int zaluzIndex) const;
     int getZaluzPosition(int zaluzIndex) const;
     int getShutterPosition(int zaluzIndex) const;
     uint32_t getMaxDownTime(int zaluzIndex) const; ///<v [uS]

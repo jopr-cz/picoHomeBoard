@@ -8,7 +8,6 @@ MQTT_publish::MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset
     BASE_MODUL("MQ_pub"),
     mqtt(mqtt_client),
     zaluzie(zaluzie_),
-    current_public_index(-1),
     offset(offset_)
 {
 
@@ -50,34 +49,35 @@ void MQTT_publish::procesMS(){
             printf("Invalid format of mqqt msg!\n");
         }
     }
+
 }
 
-void MQTT_publish::procesS()
-{
-    if(current_public_index==-1)
-        return;
-
-    if(mqtt==nullptr || zaluzie==nullptr){
-        return;
-    }
-
-
-
-    std::string topic="modbus/zaluzie";
-    mqtt->public_msg(num2str(zaluzie->getZaluzPosition(current_public_index)),topic+num2str(current_public_index+offset) );
-
-    current_public_index++;
-    if(current_public_index>=zaluzie->getZaluzCnt())
-        current_public_index=-1;
-}
-
-void MQTT_publish::proces10S(){
-    if(current_public_index<0){//neprobíha žadný publish
-        current_public_index=0;
+void MQTT_publish::procesS(){
+    for(int i=0;i<zaluzie->getZaluzCnt();i++){
+        if(zaluzie->getZaluzMove(i)!=ZALUZ::MOVE_NONE){
+            MQTT_POU::MQTT_MSG_T msg;
+            msg.topic="modbus/zaluzie"+num2str(i+offset)+"/state";
+            msg.msg=num2str(zaluzie->getZaluzPosition(i));
+            mqtt->public_buffer_msg(msg);
+        }
     }
 }
-
 
 void MQTT_publish::proces60S(){
+    MQTT_POU::MQTT_MSG_T msg;
+    for (int i=0;i<zaluzie->getZaluzCnt();i++) {
+        msg.topic="modbus/zaluzie"+num2str(i+offset)+"/state";
+        msg.msg=num2str(zaluzie->getZaluzPosition(i));
+        //msg2send.push(msg);
+        mqtt->public_buffer_msg(msg);
+    }
+
+    //msg.topic="modbus/zaluzie"+num2str(offset)+"/linkQuality/state";
+    //msg.msg=num2str(wifi->getSignal());
+    //msg2send.push(msg);
+}
+
+
+void MQTT_publish::proces10S(){
 
 }
