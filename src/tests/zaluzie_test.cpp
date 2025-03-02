@@ -121,7 +121,7 @@ TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
         timestamMS=timestampUs/1000;
         modul_helper.loop(timestampUs);
 
-        for(auto gp:data.gpios){
+        for(auto& gp:data.gpios){
             if(timestamMS>gp.timeMS && gp.processed==false){
                 gpio.gpio_in=gp.gpio2set;
                 gp.processed=true;
@@ -172,7 +172,7 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, ZaluzieBTNParameterizedTest, testing::Val
     TestBtnData{100,  50,  12, {{0x1, 100}, {0x2, 7000}, {0x1, 7500} ,{0x0, 8000}},{}},//rychle kliknuti, nahoru dolu
 
     //  DOUBLE CLICK test:
-    TestBtnData{100,  100,  10, {{0x1, 1000}, {0x0, 1300}, {0x1, 1600} ,{0x0, 2000}},{}},//dvojklid dolu
+    TestBtnData{100,  100,  10, {{0x1, 1000}, {0x0, 1200}, {0x1, 1400} ,{0x0, 2000}},{}},//dvojklid dolu
 
 
 

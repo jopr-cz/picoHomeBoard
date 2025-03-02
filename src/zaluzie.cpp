@@ -234,8 +234,8 @@ void ZALUZ::countMovePosition(){
         break;
     }
 
-    if(timestamp%100000==0)
-        printf("ZALUZ %d state:%d pos: %u -> %u \t shut:%u -> %u \n", zaluzie_index,moveState,position/1000,request.position/1000,shutter_position/1000,request.shutter/1000);
+    //if(timestamp%100000==0)
+    //    printf("ZALUZ %d state:%d pos: %u -> %u \t shut:%u -> %u \n", zaluzie_index,moveState,position/1000,request.position/1000,shutter_position/1000,request.shutter/1000);
 
 }
 

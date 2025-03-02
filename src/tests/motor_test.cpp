@@ -101,7 +101,7 @@ TEST_P(MotorParameterizedTest, MotorTest){
         timestamMS=timestampUs/1000;
         modul_helper.loop(timestampUs);
 
-        for(auto gp:data.gpios){
+        for(auto & gp:data.gpios){
             if(timestamMS>gp.timeMS && gp.processed==false){
                 gpio.gpio_in=gp.gpio2set;
                 gp.processed=true;
