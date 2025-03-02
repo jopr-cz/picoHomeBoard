@@ -170,6 +170,12 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, ZaluzieBTNParameterizedTest, testing::Val
     TestBtnData{0,    0,   12, {{0x1, 100}, {0x2, 6000}},{}},//uplně dolů a pak uplně nahoru
     TestBtnData{100,  0,   12, {{0x1, 100}, {0x2, 7000}, {0x0, 8000}},{}},//žaluzie zataženy ale na průduch
     TestBtnData{100,  50,  12, {{0x1, 100}, {0x2, 7000}, {0x1, 7500} ,{0x0, 8000}},{}},//rychle kliknuti, nahoru dolu
+
+    //  DOUBLE CLICK test:
+    TestBtnData{100,  100,  10, {{0x1, 1000}, {0x0, 1300}, {0x1, 1600} ,{0x0, 2000}},{}},//dvojklid dolu
+
+
+
     TestBtnData{0,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
 ));
 

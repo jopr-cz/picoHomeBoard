@@ -6,7 +6,7 @@ void ZALUZ::btnStateChanged(const BUTTON *btn, void *userData)
 }
 
 void ZALUZ::btnStateChanged(const BUTTON *btn){
-    printf("Btn %d change state to: %d\n",btn->btnIndex,btn->isPressed);
+    printf("Btn %d change state to: %d\n",btn->btnIndex,btn->isPressed());
 
     bool btnTypeDown=false;
     bool btnTypeUp=false;
@@ -38,37 +38,42 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
 
 
     if(btnTypeUp){
-        if(btn->isPressed){
+        if(btn->act_state & BUTTON::BTN_DOUBLE_CLICK){
             resetAllStates();
             request.request_valid=true;
             request.position=0;
             request.shutter=0;
-        }else if(btn->doublePressed){
+        }else if(btn->act_state & BUTTON::BTN_CLICK){
             resetAllStates();
             request.request_valid=true;
             request.position=0;
             request.shutter=0;
         }else{
-            resetAllStates();
-            request.request_valid=false;
-            request.position=0;
+            if(! (btn->last_state & BUTTON::BTN_DOUBLE_CLICK )){
+                resetAllStates();
+                request.request_valid=false;
+                request.position=0;
+            }
         }
         
     }else if(btnTypeDown){
-        if(btn->isPressed){
+        if(btn->act_state & BUTTON::BTN_DOUBLE_CLICK){
             resetAllStates();
             request.request_valid=true;
             request.position=maxDownTime;
             request.shutter=maxShutterTime;
-        }else if(btn->doublePressed){
+        }else if(btn->act_state & BUTTON::BTN_CLICK){
             resetAllStates();
             request.request_valid=true;
             request.position=maxDownTime;
             request.shutter=maxShutterTime;
+
         }else{
-            resetAllStates();
-            request.request_valid=false;
-            request.position=maxShutterTime;
+            if(! (btn->last_state & BUTTON::BTN_DOUBLE_CLICK )){
+                resetAllStates();
+                request.request_valid=false;
+                request.position=maxShutterTime;
+            }
         }
     }
 }
@@ -362,7 +367,7 @@ uint8_t ZALUZ::getShutterPercent() const{
 void ZALUZIE::btnStateChanged(const BUTTON* btn,void * userData) {
     // Your callback logic here
     // Example: Print the address of the button
-    printf("Btn %d change state to: %d\n",btn->btnIndex,btn->isPressed);
+    printf("Btn %d change state to: %d\n",btn->btnIndex,btn->isPressed());
 }
 
 bool ZALUZIE::chectZaluzIndex(int index) const{

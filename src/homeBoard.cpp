@@ -46,7 +46,7 @@ bool HomeBoard::readDiscreteInput(uint16_t address){
     const BUTTON * btn=gpio->getBtn(address);
     if(btn==NULL)
         return false;
-    return btn->isPressed;
+    return btn->isPressed();
 }
 
 
