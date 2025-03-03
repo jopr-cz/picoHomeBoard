@@ -6,15 +6,16 @@
 #include "mqtt_pou.h"
 #include "zaluzie.h"
 
-
+class WIFI;
 class MQTT_publish: public BASE_MODUL{
 public:
-    MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset_);
+    MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset_, WIFI* _wifi);
 
 protected:
     MQTT_POU * mqtt;
     ZALUZIE *  zaluzie;
     int offset;//žaluziovy ofset žaluzie č. = offset + žaluz číslo
+    WIFI * wifi;
 
 
     virtual void procesMS()override;

@@ -1,14 +1,15 @@
 #include "mqtt_publisher.h"
 
 
+#include "wifi.h"
 
 
-
-MQTT_publish::MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset_):
+MQTT_publish::MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset_, WIFI * _wifi):
     BASE_MODUL("MQ_pub"),
     mqtt(mqtt_client),
     zaluzie(zaluzie_),
-    offset(offset_)
+    offset(offset_),
+    wifi(_wifi)
 {
 
     std::string topic="modbus/set/zaluzie";
@@ -72,9 +73,9 @@ void MQTT_publish::proces60S(){
         mqtt->public_buffer_msg(msg);
     }
 
-    //msg.topic="modbus/zaluzie"+num2str(offset)+"/linkQuality/state";
-    //msg.msg=num2str(wifi->getSignal());
-    //msg2send.push(msg);
+    msg.topic="modbus/zaluzie"+num2str(offset)+"/linkQuality/state";
+    msg.msg=num2str(wifi->getSignal());
+    mqtt->public_buffer_msg(msg);
 }
 
 

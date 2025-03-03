@@ -109,7 +109,7 @@ int main()
 
 
     HomeBoard homeBoard(zaluzie,&gpio,&ser);
-    MQTT_publish mqtt_publisher(&mqtt,zaluzie,offset);
+    MQTT_publish mqtt_publisher(&mqtt,zaluzie,offset,&wifi);
 
 
     modul_helper.addModul(&ser);
