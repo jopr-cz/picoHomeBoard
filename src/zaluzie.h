@@ -63,6 +63,7 @@ public:
     void runDown();//jedeme dolu
     void stop();//zastavujeme vsechny pohyby
 
+    void info()const;
     /// @brief MOTOR NAVIJI - zaluzie jedou dolů zavřené, - chci otvirat? motor musi navíjet
     void shutterOpen(); 
 
@@ -151,6 +152,8 @@ public:
     int getShutterPosition(int zaluzIndex) const;
     uint32_t getMaxDownTime(int zaluzIndex) const; ///<v [uS]
     uint32_t getMaxShutterTime(int zaluzIndex) const; ///<v [uS]
+
+    void info(int zaluzIndex)const;
 
 
     void setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex);

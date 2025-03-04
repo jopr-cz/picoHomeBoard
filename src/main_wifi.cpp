@@ -98,8 +98,8 @@ int main()
     }
 
 
-    WIFI wifi("jopr6","ytits1234");
-    //WIFI wifi("jopr5","ytits1234");
+    //WIFI wifi("jopr6","ytits1234");
+    WIFI wifi("jopr5","ytits1234");
     MQTT_POU mqtt("192.168.3.30",1885,"PicoW"+num2str(offset));
 
     //MQTT_POU mqtt("192.168.2.42",1883);
@@ -130,6 +130,7 @@ int main()
 	while (1) {
 		timestamp = get_absolute_time();
         modul_helper.loop(timestamp._private_us_since_boot);
+        //modul_helper.loop(timestamp);
 		userInput = getchar_timeout_us(0);//us
 		switch(userInput){
             case 'a':
@@ -145,6 +146,18 @@ int main()
                 printf("Test: off   %d\n",(zaluzSettingArray+1)->maxDownTime);
                 printf("Test: off   %d\n",zaluzSettingArray[1].maxDownTime);
             break;
+            case '1':
+                zaluzie->info(1);
+                break;
+            case '2':
+                zaluzie->info(2);
+                break;
+            case '3':
+                zaluzie->info(3);
+                break;
+            case '4':
+                zaluzie->info(4);
+                break;
             case 's':
                 ser.sendStr(std::string("AHOJ"));
             break;

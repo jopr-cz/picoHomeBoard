@@ -174,6 +174,10 @@ void ZALUZ::stop(){
     setMoveState(MOVE_NONE);
 }
 
+void ZALUZ::info() const{
+    printf("ZALUZ %d state:%d pos: %u -> %u \t shut:%u -> %u \n", zaluzie_index,moveState,position/1000,request.position/1000,shutter_position/1000,request.shutter/1000);
+}
+
 
 void ZALUZ::shutterOpen(){
     if(shutter_position<=0){
@@ -438,6 +442,23 @@ uint32_t ZALUZIE::getMaxShutterTime(int zaluzIndex) const{
     }
     printf("Getting maxShutter of: %d -> %u\n", zaluzIndex,zaluzie.at(zaluzIndex)->getMaxShutterTime());
     return zaluzie.at(zaluzIndex)->getMaxShutterTime();
+}
+
+void ZALUZIE::info(int zaluzIndex) const{
+
+    printf("INFO\n");
+    if(!chectZaluzIndex(zaluzIndex)){
+        return;
+    }
+
+    printf("Z:%d max:%u , %u \n",zaluzIndex,zaluzie[zaluzIndex]->getMaxDownTime(),zaluzie[zaluzIndex]->getMaxShutterTime());
+    zaluzie[zaluzIndex]->info();
+
+    //for(int i=0;i<ZALUZ_CNT;i++){
+    //    printf("Z:%d max:%u , %u \n",i,zaluzie[i]->getMaxDownTime(),zaluzie[i]->getMaxShutterTime());
+    //    zaluzie[i]->info();
+    //}
+
 }
 
 void ZALUZIE::setState(ZALUZ::ZALUZ_STATE newState, int zaluzIndex){
