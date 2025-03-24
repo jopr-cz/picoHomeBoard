@@ -17,7 +17,12 @@ MQTT_publish::MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset
         mqtt->subscribe_msg(topic+num2str(i+offset));
     }
 
+    topic="modbus/set/zaluzie_tilt";
+    for(int i=0;i<zaluzie->getZaluzCnt();i++){
+        mqtt->subscribe_msg(topic+num2str(i+offset));
+    }
 }
+
 
 void MQTT_publish::procesMS(){
     if(mqtt==nullptr)
@@ -27,39 +32,62 @@ void MQTT_publish::procesMS(){
         MQTT_POU::MQTT_MSG_T msg=mqtt->getRecMsg();
         printf("Rec: %s ->  %s\n",msg.topic.c_str(),msg.msg.c_str());
 
-        size_t pos = msg.topic.find("zaluzie");
-        if (pos != std::string::npos) {
-            pos += 7; // Length of "zaluzie"
-            std::string number_str = msg.topic.substr(pos); // Extract the substring after "zaluzie"
-            int index = std::stoi(number_str);         // Convert it to an integer
-            index=index-offset;
-            if(msg.msg.find("STOP")!=std::string::npos){
-                printf("Settting zaluz %d STOP\n",index);
-                zaluzie->stop(index);
-            }else{
-                bool ok;
-                int value = str2num(msg.msg, &ok);
-                if(ok){
-                    printf("Settting zaluz %d to %d\n",index,value);
-                    zaluzie->setPosition(value,index);
-                }else{
-                    printf("Cannot convert val to int!!\n");        
-                }
-            }
-        } else {
-            printf("Invalid format of mqqt msg!\n");
+        int index=getNumber(msg.topic);
+        bool ok;
+        int value = str2num(msg.msg, &ok);
+        if(index<0)
+            return;
+
+
+        if(msg.msg.find("STOP")!=std::string::npos){
+            printf("Settting zaluz %d STOP\n",index);
+            zaluzie->stop(index);
+            return;
+        }
+
+        if(ok==false){
+            //
+            return;
+        }
+        if (msg.topic.find("zaluzie_tilt") != std::string::npos) {
+            printf("Settting zaluz %d to %d\n",index,value);
+            zaluzie->setPosition(value,index);
+        }else if (msg.topic.find("zaluzie_tilt") != std::string::npos) {
+            printf("Settting zaluz %d to %d\n",index,value);
+            zaluzie->setPosition(value,index);
         }
     }
-
 }
+
+void MQTT_publish::send_zaluz_state(int zaluzID){
+    MQTT_POU::MQTT_MSG_T msg;
+    msg.topic="modbus/zaluzie"+num2str(zaluzID+offset)+"/state";
+    msg.msg+="{ pos: ";
+    msg.msg+=num2str(zaluzie->getZaluzPosition(zaluzID));
+    msg.msg+=" , shut";
+    msg.msg+=num2str(zaluzie->getShutterPosition(zaluzID));
+    msg.msg+=" }";
+    mqtt->public_buffer_msg(msg);
+}
+
+
+
+int MQTT_publish::getNumber(const std::string &str) const{
+    size_t pos = str.find_first_of("0123456789");
+    if (pos != std::string::npos) {
+        return std::stoi(str.substr(pos));
+    } else {
+        //"No number found"
+        return -1;
+    }
+}
+
+
 
 void MQTT_publish::procesS(){
     for(int i=0;i<zaluzie->getZaluzCnt();i++){
         if(zaluzie->getZaluzMove(i)!=ZALUZ::MOVE_NONE){
-            MQTT_POU::MQTT_MSG_T msg;
-            msg.topic="modbus/zaluzie"+num2str(i+offset)+"/state";
-            msg.msg=num2str(zaluzie->getZaluzPosition(i));
-            mqtt->public_buffer_msg(msg);
+            send_zaluz_state(i);
         }
     }
 }
@@ -67,10 +95,7 @@ void MQTT_publish::procesS(){
 void MQTT_publish::proces60S(){
     MQTT_POU::MQTT_MSG_T msg;
     for (int i=0;i<zaluzie->getZaluzCnt();i++) {
-        msg.topic="modbus/zaluzie"+num2str(i+offset)+"/state";
-        msg.msg=num2str(zaluzie->getZaluzPosition(i));
-        //msg2send.push(msg);
-        mqtt->public_buffer_msg(msg);
+        send_zaluz_state(i);
     }
 
     msg.topic="modbus/zaluzie"+num2str(offset)+"/linkQuality/state";

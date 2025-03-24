@@ -42,12 +42,13 @@ bool MCP23017::setOutput(uint64_t outputs){
 
 
 
+
 void MCP23017::init(){
-    //write_register(0x0A,0x00);
     int result=write_dual_registers(0x00, 0x0000);//nastaveni GPIO jako OUTPUT
     if(result !=0){
-        printf("MCP23017 init error %d\n");
+        printf("MCP23017 init error %d\n",result);
         initOK=false;
+        return;
     }
     initOK=true;
     setOutput(0x0000);

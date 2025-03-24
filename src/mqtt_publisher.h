@@ -17,6 +17,10 @@ protected:
     int offset;//žaluziovy ofset žaluzie č. = offset + žaluz číslo
     WIFI * wifi;
 
+    void send_zaluz_state(int zaluzID);
+
+    int getNumber(const std::string & str)const;
+
 
     virtual void procesMS()override;
     virtual void procesS()override;
