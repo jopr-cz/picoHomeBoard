@@ -88,8 +88,6 @@ TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
         {4000000,1000000},
         {4000000,1000000}
     };
-
-
     const int ZaluzIndex=0;//index zaluzie na ktery budu brat dotazy
 
     MAIN_HELPER modul_helper;
@@ -110,8 +108,6 @@ TEST_P(ZaluzieBTNParameterizedTest, ZaluzieTestTlacitek){
     for(auto& state:data.zaluz_state){
         state.processed=false;
     }
-
-
     while(true){
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         timestampUs= (end_time.tv_sec - start_time.tv_sec) * 1000000LL + (end_time.tv_nsec - start_time.tv_nsec) / 1000LL;
@@ -174,10 +170,71 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, ZaluzieBTNParameterizedTest, testing::Val
     //  DOUBLE CLICK test:
     TestBtnData{100,  100,  10, {{0x1, 1000}, {0x0, 1200}, {0x1, 1400} ,{0x0, 2000}},{}},//dvojklid dolu
 
-
-
     TestBtnData{0,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
 ));
+
+
+
+
+
+TEST(ZaluzieBtnRandomTest, ZaluzieTestTlacitek){
+    //Test pro náhodné klikání na tlačítka
+    //nekontroluje se pozice žaluzie, ale jen jestli se neobjeví chyba na motoru
+
+    static const ZALUZ_SETTING zaluzSettingArray[] = {
+        {4000000,1000000},
+        {4000000,1000000},
+        {4000000,1000000}
+    };
+
+    const int ZaluzIndex=0;//index zaluzie na ktery budu brat dotazy
+    const unsigned int totalTimeoutS=1000;// jak dlouho test bude trvat v sekundach  [v sekundach]
+    MAIN_HELPER modul_helper;
+    GPIO_TEST gpio;
+    modul_helper.addModul(&gpio);
+    ZALUZIE zaluzie(&gpio,zaluzSettingArray,ZaluzIndex+1);
+    modul_helper.addModul(&zaluzie);
+    
+
+    struct timespec start_time, end_time;
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
+    long long timestampUs;
+    uint32_t timestamMS;
+    gpio.gpio_in=0x0000;
+    bool test_pass=false;
+    printf("Start TEST\n");
+
+    while(true){
+        clock_gettime(CLOCK_MONOTONIC, &end_time);
+        timestampUs= (end_time.tv_sec - start_time.tv_sec) * 1000000LL + (end_time.tv_nsec - start_time.tv_nsec) / 1000LL;
+
+        timestampUs=timestampUs*100;//zrychlení času
+
+        timestamMS=timestampUs/1000;
+        modul_helper.loop(timestampUs);
+
+        // náhodné klikání na tlačítka
+        if(timestamMS%100==0 && rand() % 5 == 0){//každou 100ms s pravděpodobností 1/5
+            //int btnTypeDown=rand()%2;
+
+            int btn = rand() & 0x0f;//náhodná kombinace tlačítek 0x00-0xff
+            if(rand() % 5 == 0)//jkeště vypnutí má vyšší pravděpodobnost
+                btn=0x00;
+            gpio.gpio_in = btn;
+
+        }
+
+
+        if(timestamMS/1000>=totalTimeoutS)
+            break;
+
+        if(gpio.errorCode()!=0){
+            EXPECT_EQ(0,gpio.errorCode());
+            break;
+        }
+    }
+
+}
 
 
 
