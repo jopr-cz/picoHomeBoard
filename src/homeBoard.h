@@ -111,11 +111,11 @@ static const ZALUZ_SETTING zaluzSettingArray[] = {
     {34000000, 1000000},        ///< zaluzie 11  modbus addr2
     {60000000, 1000000},        ///< zaluzie 12  modbus addr2
 
-    {60000000, 1000000},        ///< zaluzie 13  modbus addr 3
-    {60000000, 1000000},        ///< zaluzie 14  modbus addr 3
-    {60000000, 1000000},        ///< zaluzie 15  modbus addr 3
-    {60000000, 1000000},        ///< zaluzie 15  modbus addr 3
-    {60000000, 1000000},        ///< zaluzie 16  modbus addr 3
+    {34000000, 1000000},        ///< zaluzie 13  modbus addr 3
+    {20000000, 1000000},        ///< zaluzie 14  modbus addr 3
+    {20000000, 1000000},        ///< zaluzie 15  modbus addr 3
+    {34000000, 1000000},        ///< zaluzie 15  modbus addr 3
+    {20000000, 1000000},        ///< zaluzie 16  modbus addr 3
     {60000000, 1000000}         ///< zaluzie 17  modbus addr 3
 };
 
