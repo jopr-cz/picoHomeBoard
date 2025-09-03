@@ -13,7 +13,7 @@ public:
     virtual uint16_t getAddress()const override;
 protected:
 
-    const uint LED_PIN = 25;
+    const uint32_t LED_PIN = 25;
 
     virtual void setStatusLed(bool on)override;
     virtual uint16_t getBtnInputState()override;///< vráti vstupy z HW (talčítkové)
@@ -21,7 +21,7 @@ protected:
 
 private:
     MCP23017 mcp;
-    void configInput(const uint pin, bool pullUP=false);
-    void configOutput(const uint pin);
+    void configInput(const uint32_t pin, bool pullUP=false);
+    void configOutput(const uint32_t pin);
 };
 #endif

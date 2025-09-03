@@ -79,7 +79,7 @@ bool GPIO_PICO::setGPIO(int number, bool status){
 
 
 
-void GPIO_PICO::configInput(const uint pin, bool pullUP){
+void GPIO_PICO::configInput(const uint32_t pin, bool pullUP){
     gpio_init(pin);
     gpio_set_dir(pin, GPIO_IN);
     gpio_set_pulls(pin, pullUP,false);
@@ -88,7 +88,7 @@ void GPIO_PICO::configInput(const uint pin, bool pullUP){
 
 
 
-void GPIO_PICO::configOutput(const uint pin){
+void GPIO_PICO::configOutput(const uint32_t pin){
     gpio_init(pin);
     gpio_set_dir(pin, GPIO_OUT);
 }

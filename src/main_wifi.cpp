@@ -129,7 +129,7 @@ int main()
 
 	while (1) {
 		timestamp = get_absolute_time();
-        modul_helper.loop(timestamp);
+        modul_helper.loop(timestamp._private_us_since_boot);
         //modul_helper.loop(timestamp);
 		userInput = getchar_timeout_us(0);//us
 		switch(userInput){
