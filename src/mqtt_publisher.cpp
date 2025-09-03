@@ -21,6 +21,15 @@ MQTT_publish::MQTT_publish(MQTT_POU * mqtt_client,ZALUZIE * zaluzie_, int offset
     for(int i=0;i<zaluzie->getZaluzCnt();i++){
         mqtt->subscribe_msg(topic+num2str(i+offset));
     }
+
+
+    for (size_t i = 0; i < maxZaluzCnt_LastMove; i++)    {
+        zaluzLastMove[i]=false;
+    }
+    
+    if (zaluzie->getZaluzCnt() > maxZaluzCnt_LastMove) {
+        printf("WARNING: MQTT_publish maxZaluzCnt_LastMove too small %d < %d\n", maxZaluzCnt_LastMove, zaluzie->getZaluzCnt());
+    }
 }
 
 
@@ -38,6 +47,8 @@ void MQTT_publish::procesMS(){
         if(index<0)
             return;
 
+        index=index-offset;
+
 
         if(msg.msg.find("STOP")!=std::string::npos){
             printf("Settting zaluz %d STOP\n",index);
@@ -50,9 +61,9 @@ void MQTT_publish::procesMS(){
             return;
         }
         if (msg.topic.find("zaluzie_tilt") != std::string::npos) {
-            printf("Settting zaluz %d to %d\n",index,value);
-            zaluzie->setPosition(value,index);
-        }else if (msg.topic.find("zaluzie_tilt") != std::string::npos) {
+            printf("Settting zaluz %d tilt to %d\n",index,value);
+            zaluzie->setShutter(value,index);
+        }else if (msg.topic.find("zaluzie") != std::string::npos) {
             printf("Settting zaluz %d to %d\n",index,value);
             zaluzie->setPosition(value,index);
         }
@@ -62,9 +73,9 @@ void MQTT_publish::procesMS(){
 void MQTT_publish::send_zaluz_state(int zaluzID){
     MQTT_POU::MQTT_MSG_T msg;
     msg.topic="modbus/zaluzie"+num2str(zaluzID+offset)+"/state";
-    msg.msg+="{ pos: ";
+    msg.msg+="{ \"pos\": ";
     msg.msg+=num2str(zaluzie->getZaluzPosition(zaluzID));
-    msg.msg+=" , shut";
+    msg.msg+=" , \"shut\": ";
     msg.msg+=num2str(zaluzie->getShutterPosition(zaluzID));
     msg.msg+=" }";
     mqtt->public_buffer_msg(msg);
@@ -88,6 +99,10 @@ void MQTT_publish::procesS(){
     for(int i=0;i<zaluzie->getZaluzCnt();i++){
         if(zaluzie->getZaluzMove(i)!=ZALUZ::MOVE_NONE){
             send_zaluz_state(i);
+            zaluzLastMove[i]=true;
+        }else if (zaluzLastMove[i]==true ){//abych poslal i posledni stav kdy se přestala hýbat
+            send_zaluz_state(i);
+            zaluzLastMove[i]=false;
         }
     }
 }

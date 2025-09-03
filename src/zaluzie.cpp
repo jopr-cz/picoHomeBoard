@@ -95,7 +95,9 @@ void ZALUZ::setPosition(uint16_t newPositionPercent){
 void ZALUZ::setShutter(uint16_t newShuttePositionPerent){
     if(request.request_valid==false){//pokud by byl už nějaký request, tak přepíšu jen hodnotu Shutter
         resetAllStates();
+        request.position=position;//zachovam si aktualni pozici
     }
+    
     request.request_valid=true;
     request.shutter=(maxShutterTime*newShuttePositionPerent)/100;
     printf("Zaluzie %d seting request position:%u shutter:%u\n",zaluzie_index,request.position,request.shutter);

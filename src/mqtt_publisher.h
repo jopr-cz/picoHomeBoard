@@ -17,6 +17,10 @@ protected:
     int offset;//žaluziovy ofset žaluzie č. = offset + žaluz číslo
     WIFI * wifi;
 
+    static const size_t maxZaluzCnt_LastMove=20;
+
+    bool zaluzLastMove[maxZaluzCnt_LastMove]={false};//max 20 žaluzií - pamatuji si zda se hýbala abych poslal aktualizaci stavu
+
     void send_zaluz_state(int zaluzID);
 
     int getNumber(const std::string & str)const;
@@ -26,6 +30,7 @@ protected:
     virtual void procesS()override;
     virtual void proces10S()override;
     virtual void proces60S()override;
+
 
 
 };
