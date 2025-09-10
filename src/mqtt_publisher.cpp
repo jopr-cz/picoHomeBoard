@@ -60,6 +60,12 @@ void MQTT_publish::procesMS(){
             //
             return;
         }
+
+        if(value<0)
+            value=0;
+        else if (value>100)
+            value=100;
+
         if (msg.topic.find("zaluzie_tilt") != std::string::npos) {
             printf("Settting zaluz %d tilt to %d\n",index,value);
             zaluzie->setShutter(value,index);

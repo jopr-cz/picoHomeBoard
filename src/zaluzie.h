@@ -48,6 +48,7 @@ public:
         motorStopTime(0),
         state(OPEN),
         moveState(MOVE_NONE),
+        lastMoveState(MOVE_NONE),
         gpio(gpioInterface),
         doubleUpRequest(false),
         doubleDownRequest(false),
@@ -115,6 +116,7 @@ private:
 
     ZALUZ_STATE state;
     ZALUZ_MOVE moveState;
+    ZALUZ_MOVE lastMoveState;//proměnná pro počítání času mezi stavy (přiřazení času ke správné proměnné)
 
     GPIO_BASE * gpio;
 

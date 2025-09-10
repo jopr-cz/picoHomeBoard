@@ -81,6 +81,7 @@ void ZALUZ::btnStateChanged(const BUTTON *btn){
 void ZALUZ::setPosition(uint16_t newPositionPercent){
     if(request.request_valid==false){//pokud by byl už nějaký request, tak přepíšu jen hodnotu Position
         resetAllStates();
+        request.shutter=shutter_position;//zachovam si aktualni pozici
     }
     request.request_valid=true;
     request.position=(maxDownTime/100)*newPositionPercent;
@@ -88,7 +89,7 @@ void ZALUZ::setPosition(uint16_t newPositionPercent){
         request.shutter=0;
     else if(newPositionPercent==100)//pokud zavřu, tak nechám shutter na 0(otevřený) -> žaluzije je zajetá
         request.shutter=maxShutterTime;
-    printf("Zaluzie %d seting request position:%u shutter:%u act:%u shut:%u\n",zaluzie_index,request.position,request.shutter,position,shutter_position);
+    printf("Zaluzie %d setting request position:%u shutter:%u act:%u shut:%u\n",zaluzie_index,request.position,request.shutter,position,shutter_position);
 }
 
 
@@ -100,7 +101,7 @@ void ZALUZ::setShutter(uint16_t newShuttePositionPerent){
     
     request.request_valid=true;
     request.shutter=(maxShutterTime*newShuttePositionPerent)/100;
-    printf("Zaluzie %d seting request position:%u shutter:%u\n",zaluzie_index,request.position,request.shutter);
+    printf("Zaluzie %d setting shutter request position:%u shutter:%u\n",zaluzie_index,request.position,request.shutter);
 }
 
 void ZALUZ::setState(ZALUZ_STATE state)
@@ -208,7 +209,7 @@ void ZALUZ::shutterClose(){
 
 void ZALUZ::countMovePosition(){
     uint32_t diff=(timestamp-lastProcessedTime);
-    switch (moveState)
+    switch (lastMoveState)
     {
     case MOVE_DOWN:
         if(position > maxDownTime - diff){//pretečení
@@ -240,13 +241,13 @@ void ZALUZ::countMovePosition(){
         break;
     }
 
-    //if(timestamp%100000==0)
-    //    printf("ZALUZ %d state:%d pos: %u -> %u \t shut:%u -> %u \n", zaluzie_index,moveState,position/1000,request.position/1000,shutter_position/1000,request.shutter/1000);
-
+    //if(zaluzie_index==1 && timestamp%10000==0)
+    //    printf("%u ZALUZ %d state:%dx%d pos: %u -> %u \t shut:%u -> %u \n", timestampMS,zaluzie_index,lastMoveState,moveState,position/1000,request.position/1000,shutter_position/1000,request.shutter/1000);
+    lastMoveState=moveState;
+    
 }
 
 void ZALUZ::setMoveState(ZALUZ_MOVE newState){
-    countMovePosition();
     moveState=newState;
 }
 
@@ -332,6 +333,8 @@ void ZALUZ::process(){
         resetAllStates();
         stop();
     }
+
+    countMovePosition();
     lastProcessedTime=timestamp;
 }
 
