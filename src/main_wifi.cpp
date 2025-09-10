@@ -168,6 +168,12 @@ int main()
 				puts("REBOOT\n");
 				reset_usb_boot(0,0);
 			break;
+            case 'x':
+                wifi.disable();
+			break;
+            case 'y':
+                wifi.enable();
+			break;
 			case PICO_ERROR_TIMEOUT:
 			break;
 		}
