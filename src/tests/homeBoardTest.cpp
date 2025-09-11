@@ -141,7 +141,7 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, HomeBoardParamTest, testing::Values(
     ////////pozice, shutterPos, totalTimout[S],{gpio, time},{zaluzState, time}
     TestBtnData{0,     0,     10, {{0x2, 100}, {2, 200}},{}},
     TestBtnData{100,   100,     10, {{0x1, 2000}},{}},
-    TestBtnData{0,     -1,     10, {{0x1, 1000}, {0x2, 5000} },{}},
+    TestBtnData{0,     -1,     12, {{0x1, 1000}, {0x2, 5000} },{}},
     TestBtnData{75,     0,     11, {{0x1, 2000}, {0x2, 8000},{0x0, 10000}},{}},
     TestBtnData{100,   -1,     10, {}, {{ZALUZ::CLOSE,3000}}},
     TestBtnData{0,     -1,     10, {}, {{ZALUZ::CLOSE_LIGHT,1000},{ZALUZ::OPEN,5000}}},

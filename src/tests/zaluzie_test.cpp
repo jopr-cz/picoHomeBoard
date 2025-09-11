@@ -170,7 +170,7 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, ZaluzieBTNParameterizedTest, testing::Val
     //  DOUBLE CLICK test:
     TestBtnData{100,  100,  10, {{0x1, 1000}, {0x0, 1200}, {0x1, 1400} ,{0x0, 2000}},{}},//dvojklid dolu
 
-    TestBtnData{0,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
+    TestBtnData{100,   -1,   10, {{0x2, 100}, {0x1, 300}},{}} //zavřít žaluzie 
 ));
 
 

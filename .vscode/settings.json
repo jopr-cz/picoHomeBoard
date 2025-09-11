@@ -1,4 +1,5 @@
 {
+    "cmake.ctest.enable": false,
     "cmake.sourceDirectory": "/home/pou/pico/picoHomeBoard/src",
     "files.associations": {
         "array": "cpp",

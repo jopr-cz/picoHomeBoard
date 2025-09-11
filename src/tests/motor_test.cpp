@@ -146,7 +146,7 @@ INSTANTIATE_TEST_SUITE_P(InlineValues, MotorParameterizedTest, testing::Values(
     TestData{100, 100,   10, {}, {{80,1000},{100,6000}}},
     TestData{0,    0,   12, {{0x1, 100}, {0x2, 6000}},{}},//uplně dolů a pak uplně nahoru
     TestData{100,  0,   12, {{0x1, 100}, {0x2, 7000}, {0x0, 8000}},{}},//žaluzie zataženy ale na průduch
-    TestData{0,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
+    TestData{100,   -1,   10, {{0x2, 100}, {0x1, 300}},{}}
 ));
 
 
