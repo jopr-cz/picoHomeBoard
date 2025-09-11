@@ -33,11 +33,14 @@ public:
         SHUTTER_OPEN,///<otviram (motor nahoru)
         SHUTTER_CLOSE,///<zaviram (motor dolu)
         MOTOR_WAITING,///<cekání na přepnutí směru motoru ↑ ↓ - motor se netočí!
+        POSITION_RESET,///<reset pozice - pokud je žaluzie zavřená (nahoře) tak ještě chvilku zamotám aby se dotáhla úplně nahoru
     };
 
 
     ZALUZ(GPIO_BASE * gpioInterface,int index, const ZALUZ_SETTING setting):
         BASE_MODUL("zaluz"),
+        position_reset_time(1*1000*1000),
+        position_reset_act_time(0),
         position(setting.maxDownTime),
         maxDownTime(setting.maxDownTime),
         shutter_position(setting.maxShutterTime),//predpokladam ze zaluzie jou zavinute tedy museli byt shuttle otevřen ->max
@@ -66,6 +69,10 @@ public:
     void stop();//zastavujeme vsechny pohyby
 
     void info()const;
+
+    /// @brief Pokud je požadavek na zavření žaluzie, tak to přejedu, abych ji úplně zavřel a vynujuji proměnné
+    void resetPosition(); 
+
     /// @brief MOTOR NAVIJI - zaluzie jedou dolů zavřené, - chci otvirat? motor musi navíjet
     void shutterOpen(); 
 
@@ -98,6 +105,9 @@ public:
     }
 
 private:
+    const uint32_t position_reset_time;///<čas v [uS] který motor jede navíc při zatažení žaluzií resetu pozice
+    uint32_t position_reset_act_time;///<čas v [uS] který motor jede navíc při resetu pozice
+
     uint32_t position;///<aktualni stav zaluzie (cas [us] ktery jela dolu)
     uint32_t maxDownTime;///<počet [us] pro plné zavření - ze stavu OPEN -> CLOSE
 

@@ -182,6 +182,11 @@ void ZALUZ::info() const{
 }
 
 
+void ZALUZ::resetPosition(){
+    setMoveState(POSITION_RESET);
+    motor_up();
+}
+
 void ZALUZ::shutterOpen(){
     if(shutter_position<=0){
         if(shutter_position<0)
@@ -236,6 +241,9 @@ void ZALUZ::countMovePosition(){
             shutter_position =0;
         else
             shutter_position -= diff;
+    break;
+    case POSITION_RESET:
+        position_reset_act_time+=diff;
     break;
     default:
         break;
@@ -324,9 +332,20 @@ void ZALUZ::process(){
             }else if(shutter_position>request.shutter+hystereze){
                 shutterOpen();
             }else{
-                request.request_valid=false;
-                stop();
-                resetAllStates();
+                //pokud požadavek na zavření tak dojedu víc - abych měl jistotu že je žaluzie nahoře 
+                if(request.position==0 && request.shutter==0 && position_reset_act_time <= position_reset_time){
+                    resetPosition();
+                }else{
+                    if(position_reset_act_time > position_reset_time){//probehlo resetovani pozice - zaluz je nahore, resnu promenne
+                        position=0;
+                        shutter_position=0;
+                        printf("ZALUZ %d dojel na pozici RESET\n",zaluzie_index);
+                    }
+                    position_reset_act_time=0;
+                    request.request_valid=false;
+                    stop();
+                    resetAllStates();
+                }
             }
         }
     }else{
