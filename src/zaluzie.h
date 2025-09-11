@@ -60,13 +60,13 @@ public:
             setPosition(0);
     }
    
-    void setPosition(uint16_t newPositionPercent); // nova zadana pozici v [%]
-    void setShutter(uint16_t newShuttePositionPerent); // náklon v [%]
-    void setState(ZALUZ_STATE state); // jedeme do daneho stavu - např. modbusem
+    void setPosition(uint16_t newPositionPercent); ///< nova zadana pozici v [%]
+    void setShutter(uint16_t newShuttePositionPerent); ///< náklon v [%]
+    void setState(ZALUZ_STATE state); ///< jedeme do daneho stavu - např. modbusem
 
-    void runUp();//jedeme nahoru
-    void runDown();//jedeme dolu
-    void stop();//zastavujeme vsechny pohyby
+    void runUp();///<jedeme nahoru
+    void runDown();///<jedeme dolu
+    void stop();///<zastavujeme vsechny pohyby
 
     void info()const;
 
@@ -90,8 +90,8 @@ public:
     void process()override;
     void procesMS()override;
     ZALUZ_STATE getState()const{return state;}
-    uint8_t getPositionPercent()const;//vrati pozici v pracentech
-    uint8_t getShutterPercent()const;//vrati pozici v pracentech
+    uint8_t getPositionPercent()const;///<vrati pozici v pracentech
+    uint8_t getShutterPercent()const;///<vrati pozici v pracentech
     uint32_t getMaxDownTime()const{return maxDownTime;}///<v [uS]
     uint32_t getMaxShutterTime()const{return maxShutterTime;}///<v [uS]
 

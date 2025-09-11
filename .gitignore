@@ -2,3 +2,4 @@ build*/
 src/CMakeLists.txt.user
 *.cache*
 cppcheck-cppcheck-build-dir/
+html/
