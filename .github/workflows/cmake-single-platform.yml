@@ -20,24 +20,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout bez submodulů
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
       with:
-        submodules: false
-        persist-credentials: false
-
-    - name: Přepni SSH → HTTPS v .gitmodules
-      run: |
-        sed -i 's#git@github.com:#https://github.com/#g' .gitmodules
-        git submodule sync --recursive
-
-    - name: Nastav HTTP autentizaci s PAT
-      run: |
-        git config --global url."https://${{ secrets.MY_PAT }}@github.com/".insteadOf "https://github.com/"
-
-    - name: Klon a aktualizuj submoduly
-      run: |
-        git submodule update --init --recursive
+        submodules: recursive   # stáhne i submoduly
+        token: ${{ secrets.GITHUB_TOKEN }}  # povolí čtení soukromých repozitářů
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
