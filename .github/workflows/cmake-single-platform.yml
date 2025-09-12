@@ -23,18 +23,18 @@ jobs:
     
     - uses: actions/checkout@v4
       with:
-        submodules: false   # nejdřív jen hlavní repo
+        submodules: false   # jen hlavní repo
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Fix submodule URL for CI
+    - name: Rewrite submodule URL for CI
       run: |
         git config submodule.src/jolib.url https://github.com/poucz/jolib.git
 
     - name: Checkout submodules with token
       run: |
         git submodule sync --recursive
-        git -c "http.extraheader=AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}" submodule update --init --recursive
-
+        git -c "http.extraheader=AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}" \
+            submodule update --init --recursive
       
 
 
