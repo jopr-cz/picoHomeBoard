@@ -30,6 +30,13 @@ jobs:
       run: |
         git config submodule.src/jolib.url https://github.com/poucz/jolib.git
 
+    - name: Fix submodule URL to HTTPS
+      run: |
+        git config -f .gitmodules submodule.src/jolib.url https://github.com/poucz/jolib.git
+        git submodule sync --recursive
+        git submodule update --init --recursive
+
+
     - name: Checkout submodules with token
       run: |
         git submodule sync --recursive
