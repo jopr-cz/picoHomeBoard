@@ -30,8 +30,12 @@ jobs:
       run: |
         git config submodule.src/jolib.url https://github.com/poucz/jolib.git
 
-    - name: Fetch submodules
-      run: git submodule update --init --recursive
+    - name: Checkout submodules with token
+      run: |
+        git submodule sync --recursive
+        git -c "http.extraheader=AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}" submodule update --init --recursive
+
+      
 
 
     - name: Configure CMake
