@@ -36,13 +36,12 @@ jobs:
         git submodule sync --recursive
         git submodule update --init --recursive
 
-
-    - name: Checkout submodules with token
+    - name: Fix submodule URL with token
       run: |
+        git config -f .gitmodules submodule.src/jolib.url https://github.com/${{ github.repository_owner }}/jolib.git
+        git config -f .gitmodules submodule.src/jolib.url https://${{ secrets.GITHUB_TOKEN }}@github.com/poucz/jolib.git
         git submodule sync --recursive
-        git -c "http.extraheader=AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}" \
-            submodule update --init --recursive
-      
+        git submodule update --init --recursive
 
 
     - name: Configure CMake
