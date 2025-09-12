@@ -20,27 +20,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
-    - uses: actions/checkout@v4
+      # 1) Klon hlavního repa BEZ submodulů a BEZ implicitního GITHUB_TOKEN
+    - name: Checkout without submodules
+      uses: actions/checkout@v4
       with:
-        submodules: false   # jen hlavní repo
-        token: ${{ secrets.GITHUB_TOKEN }}
+        submodules: false
+        persist-credentials: false
 
-    - name: Rewrite submodule URL for CI
+    # 2) Přesměrování všech https://github.com/ → https://x-access-token:…@github.com/
+    - name: Configure HTTP auth for GitHub
       run: |
-        git config submodule.src/jolib.url https://github.com/poucz/jolib.git
+        git config --global url."https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
-    - name: Fix submodule URL to HTTPS
+    # 3) Přepíšeme SSH‐URL na HTTP v .gitmodules
+    - name: Rewrite submodule URLs (ssh → https)
       run: |
-        git config -f .gitmodules submodule.src/jolib.url https://github.com/poucz/jolib.git
+        sed -i 's#git@github.com:\(.*\)\.git#https://github.com/\1.git#g' .gitmodules
         git submodule sync --recursive
-        git submodule update --init --recursive
 
-    - name: Fix submodule URL with token
+    # 4) Naklonujeme submoduly přes HTTP + token
+    - name: Init & update submodules
       run: |
-        git config -f .gitmodules submodule.src/jolib.url https://github.com/${{ github.repository_owner }}/jolib.git
-        git config -f .gitmodules submodule.src/jolib.url https://${{ secrets.GITHUB_TOKEN }}@github.com/poucz/jolib.git
-        git submodule sync --recursive
         git submodule update --init --recursive
 
 
