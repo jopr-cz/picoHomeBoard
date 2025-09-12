@@ -21,16 +21,17 @@ jobs:
 
     steps:
     
-        # Přepíše git URL jen v CI (SSH -> HTTPS) - github neumí použítav SSH klíč ale https token (k memu učtu automaticky)
-    - name: Use HTTPS for submodules in CI
-      run: |
-        git config --global url."https://github.com/".insteadOf git@github.com:
-
     - uses: actions/checkout@v4
       with:
-        submodules: recursive   # stáhne i submoduly
+        submodules: false   # nejdřív jen hlavní repo
         token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Fix submodule URL for CI
+      run: |
+        git config submodule.src/jolib.url https://github.com/poucz/jolib.git
+
+    - name: Fetch submodules
+      run: git submodule update --init --recursive
 
 
     - name: Configure CMake
