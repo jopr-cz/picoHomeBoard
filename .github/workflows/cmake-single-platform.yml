@@ -20,6 +20,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    
+        # Přepíše git URL jen v CI (SSH -> HTTPS) - github neumí použítav SSH klíč ale https token (k memu učtu automaticky)
+    - name: Use HTTPS for submodules in CI
+      run: |
+        git config --global url."https://github.com/".insteadOf git@github.com:
+
     - uses: actions/checkout@v4
       with:
         submodules: recursive   # stáhne i submoduly
