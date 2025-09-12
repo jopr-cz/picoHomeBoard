@@ -24,7 +24,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         # 1) SSH klíč pro veškeré git operace
-        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-key: ${{ secrets.KLIC_PRO_JOLIB }}
     
         # 2) Přesný GitHub host key (nutné pro ssh-strict: true)
         ssh-known-hosts: |
