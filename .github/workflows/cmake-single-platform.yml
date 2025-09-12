@@ -20,14 +20,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout s SSH submoduly
+    - name: Checkout hlavního repa i submodulů přes SSH
       uses: actions/checkout@v4
       with:
-          # načte hlavní repozitář i všechny submoduly přes SSH
-          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-known-hosts: github.com
-          submodules: recursive
-          fetch-depth: 0
+    # 1) Čtení repa i submodulů přes SSH
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-known-hosts: github.com
+        submodules: recursive
+
+    # 2) Odstranit vestavěný TOKEN, aby SSH mělo přednost
+        persist-credentials: false
+
+    # 3) Pro plnou historii submodulů (volitelné)
+        fetch-depth: 0
+
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
