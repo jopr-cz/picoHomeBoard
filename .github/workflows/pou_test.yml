@@ -30,13 +30,11 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
 
-    - name: Checkout via SSH
+    - name: Checkout hlavního repa (bez submodulů)
       uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
         persist-credentials: false
-        fetch-depth: 0
-
 
     - name: Ukázat proměnné
       run: |
@@ -44,8 +42,10 @@ jobs:
         echo "Owner: $GITHUB_REPOSITORY_OWNER"
         echo "Repo only: $(basename $GITHUB_REPOSITORY)"
 
-    - name: GIT checkout
-      run: git clone 
+    - name: Manuální init & update submodulů
+      run: |
+        git submodule sync --recursive
+        git submodule update --init --recursive
       
 
     - name: Configure CMake
