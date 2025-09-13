@@ -20,13 +20,24 @@ jobs:
     runs-on: jorunner
 
     steps:
-    - name: Checkout hlavního repa i submodulů přes SSH
+    - name: Setup local SSH key
+      run: |
+        mkdir -p ~/.ssh
+        cp /home/runner/.ssh/id_rsa ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+        git config --global core.sshCommand \
+          "/usr/bin/ssh -i $HOME/.ssh/id_rsa \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+
+    - name: Checkout via SSH
       uses: actions/checkout@v4
       with:
-        persist-credentials: true
         submodules: recursive
-        ssh-key: /home/runner/.ssh/id_rsa
+        persist-credentials: false
         fetch-depth: 0
+
 
     - name: Ukázat proměnné
       run: |
