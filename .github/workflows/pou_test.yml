@@ -23,7 +23,6 @@ jobs:
     - name: Setup local SSH key
       run: |
         mkdir -p ~/.ssh
-        cp /home/runner/.ssh/id_rsa ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H github.com >> ~/.ssh/known_hosts
         git config --global core.sshCommand \
