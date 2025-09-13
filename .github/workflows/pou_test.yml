@@ -25,6 +25,7 @@ jobs:
       with:
         persist-credentials: false
         submodules: recursive
+        ssh-key: /home/runner/.ssh/id_rsa
         fetch-depth: 0
 
     - name: Configure CMake
