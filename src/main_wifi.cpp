@@ -59,14 +59,14 @@ protected:
     virtual void proces10S()override{
         if(blink_modul!=nullptr){
             if(blink_modul->errorCode()==0){
-                printf("TEST WIFI EOK\n");
+                printf("TEST OK\n");
                 setBlink(1000,50);
             }else{
-                printf("TEST WIFI ERR %d \n",blink_modul->errorCode());
+                printf("TEST ERR %d \n",blink_modul->errorCode());
                 setBlink(100,50);
             }
         }else
-            printf("TEST WIFI IS NULL PTR\n");
+            printf("TEST IS NULL PTR\n");
     }
 
     BASE_MODUL * blink_modul;
@@ -174,6 +174,15 @@ int main()
             case 'y':
                 wifi.enable();
 			break;
+            case 'q':
+                wifi.print_ip();
+            break;
+            case 'e':
+                printf("Wifi signal %d\n",wifi.getSignal());
+            break;
+            case 'm':
+                printf("Mqtt error: %d\n",mqtt.errorCode());
+            break;
 			case PICO_ERROR_TIMEOUT:
 			break;
 		}

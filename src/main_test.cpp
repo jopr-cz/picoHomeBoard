@@ -40,7 +40,7 @@ protected:
     virtual void proces10S()override{
         if(blink_modul!=nullptr){
             if(blink_modul->errorCode()==0){
-                printf("TEST WIFI EOK\n");
+                printf("TEST WIFI OK\n");
                 setBlink(1000,50);
             }else{
                 printf("TEST WIFI ERR %d \n",blink_modul->errorCode());
