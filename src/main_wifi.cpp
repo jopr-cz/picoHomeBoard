@@ -72,6 +72,59 @@ protected:
     BASE_MODUL * blink_modul;
 };
 
+
+
+class TESTER_WIFI_CLASS: public BASE_MODUL{
+public:
+    TESTER_WIFI_CLASS(WIFI * wifi_modul, BASE_MODUL * checkModul):
+        BASE_MODUL("WIFI_TEST"),
+        wifi(wifi_modul),
+        check(checkModul),
+        state(WIFI_OK)
+        {}
+
+
+protected:
+    enum WIFI_STATE{
+        WIFI_OK,
+        WAIT4START,
+    };
+
+
+    WIFI * wifi;
+    BASE_MODUL * check;
+    WIFI_STATE state;
+    
+
+
+
+    void proces10S()override{
+        if(wifi==nullptr)
+            return;
+
+        if(state==WIFI_OK){
+            return;
+        }
+
+        printf("Enable wifi - for new connection \n");
+        wifi->enable();
+    }
+
+    void proces600S()override{
+        if(wifi==nullptr || check==nullptr)
+            return;
+
+        if(check->errorCode()!=0){
+            printf("Disable Wifi - check not pass...\n");
+            wifi->disable();
+        }
+    }
+
+
+
+
+};
+
 int main()
 {
     stdio_init_all();
@@ -102,10 +155,13 @@ int main()
     WIFI wifi("jopr5","ytits1234");
     MQTT_POU mqtt("192.168.3.30",1885,"PicoW"+num2str(offset));
 
+    TESTER_WIFI_CLASS testWifi(&wifi,&mqtt);
+
     //MQTT_POU mqtt("192.168.2.42",1883);
 
     modul_helper.addModul(&wifi);
     modul_helper.addModul(&mqtt);
+    modul_helper.addModul(&testWifi);
 
 
     HomeBoard homeBoard(zaluzie,&gpio,&ser);
