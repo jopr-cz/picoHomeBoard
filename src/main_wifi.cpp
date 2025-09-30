@@ -153,7 +153,7 @@ int main()
 
     //WIFI wifi("jopr6","ytits1234");
     WIFI wifi("jopr5","ytits1234");
-    MQTT_POU mqtt("192.168.3.30",1885,"PicoW"+num2str(offset));
+    MQTT_POU mqtt("mqtt.jopr.cz",1885,"PicoW"+num2str(offset));
 
     TESTER_WIFI_CLASS testWifi(&wifi,&mqtt);
 
