@@ -108,6 +108,7 @@ protected:
 
         printf("Enable wifi - for new connection \n");
         wifi->enable();
+        state=WIFI_OK;
     }
 
     void proces600S()override{
@@ -117,6 +118,7 @@ protected:
         if(check->errorCode()!=0){
             printf("Disable Wifi - check not pass...\n");
             wifi->disable();
+            state=WAIT4START;
         }
     }
 

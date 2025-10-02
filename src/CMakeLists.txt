@@ -26,6 +26,8 @@ set(PROJECT_NAME picoHomeBoard)
 project(${PROJECT_NAME} C CXX ASM)
 
 
+add_compile_definitions(MAX_MQTT_MSG=30)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
