@@ -132,10 +132,10 @@ int main()
     stdio_init_all();
     int userInput;
     bool error=false;
-    MAIN_HELPER modul_helper;
+    static MAIN_HELPER modul_helper;
     
-    SerialPico ser(true);
-    GPIO_PICO_W gpio;
+    static SerialPico ser(true);
+    static GPIO_PICO_W gpio;
     ZALUZIE *zaluzie=nullptr;
 
     error=!(address_checker(&gpio));
@@ -154,10 +154,10 @@ int main()
 
 
     //WIFI wifi("jopr6","ytits1234");
-    WIFI wifi("jopr5","ytits1234");
-    MQTT_POU mqtt("mqtt.jopr.cz",1885,"PicoW"+num2str(offset));
+    static WIFI wifi("jopr5","ytits1234");
+    static MQTT_POU mqtt("mqtt.jopr.cz",1885,"PicoW"+num2str(offset));
 
-    TESTER_WIFI_CLASS testWifi(&wifi,&mqtt);
+    static TESTER_WIFI_CLASS testWifi(&wifi,&mqtt);
 
     //MQTT_POU mqtt("192.168.2.42",1883);
 
@@ -166,8 +166,8 @@ int main()
     modul_helper.addModul(&testWifi);
 
 
-    HomeBoard homeBoard(zaluzie,&gpio,&ser);
-    MQTT_publish mqtt_publisher(&mqtt,zaluzie,offset,&wifi);
+    static HomeBoard homeBoard(zaluzie,&gpio,&ser);
+    static MQTT_publish mqtt_publisher(&mqtt,zaluzie,offset,&wifi);
 
 
     modul_helper.addModul(&ser);
